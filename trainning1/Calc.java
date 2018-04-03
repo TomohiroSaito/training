@@ -1,4 +1,4 @@
-class HelloWorld {
+class Calc {
 	public static void main(String args[]) {
 		try {
 			double ans = 0;
