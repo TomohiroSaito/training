@@ -5,29 +5,29 @@ class Calc2 {
 
 		double number1 = 0;
 		double number2 = 0;
-		int flag = 0;
+		boolean hasError = false;
 
 		try {
-			number1 = Double.parseDouble(args[0]);
+			number1 = numberCheck(args[0]);
 		} catch(NumberFormatException e) {
 			System.out.println("1番目の引数は数値で入力してください。");
-			flag = 1;
+			hasError = true;
 		}
 
 		try{
-			number2 = Double.parseDouble(args[1]);
+			number2 = numberCheck(args[1]);
 		} catch(NumberFormatException e) {
 			System.out.println("2番目の引数は数値で入力してください。");
-			flag = 1;
+			hasError = true;
 		}
 
 		String operator = operatorCheck(args[2]);
 
-		if(flag != 0) {
-			System.exit(-1);
+		if(hasError == true) {
+			return;
 		}
 
-		String message = calculation(number1, number2, operator);
+		String message = createMessage(number1, number2, operator);
 
 		System.out.println(message);
 	}
@@ -43,34 +43,40 @@ class Calc2 {
 		}
 	}
 
+	static double numberCheck(String target) {
+		double number;
+		number = Double.parseDouble(target);
+		return number;
+	}
+
 	static String operatorCheck(String operator) {
-		if(!(operator.equals("+") || operator.equals("-") || operator.equals("*") || operator.equals("/") || operator.equals("%"))) {
+		if(!(operator.matches("\\+") || operator.matches("\\-") || operator.matches("\\*") || operator.matches("\\/") || operator.matches("%"))) {
 			System.out.println("入力できる記号は、「+」、「-」、「*」、「/」、「%」です。");
 			System.exit(-1);
 		}
 		return operator;
 	}
 
-	static String calculation(double target1, double target2, String operator) {
-		String message ;
+	static String createMessage(double target1, double target2, String operator) {
+		double answer = calculation(target1, target2, operator);
+		String message = String.format("計算結果は、%.2fです。", round(answer));
+		return message;
+	}
+
+	static double calculation(double target1, double target2, String operator) {
 		double answer;
 		if(operator.equals("+")) {
 			answer = target1 + target2;
-			message = String.format("計算結果は、%.2fです。", round(answer));
 		} else if(operator.equals("-")) {
 			answer = target1 - target2;
-			message = String.format("計算結果は、%.2fです。", round(answer));
 		} else if(operator.equals("*")) {
 			answer = target1 * target2;
-			message = String.format("計算結果は、%.2fです。", round(answer));
 		} else if(operator.equals("/")) {
 			answer = target1 / target2;
-			message = String.format("計算結果は、%.2fです。", round(answer));
 		} else {
 			answer = target1 % target2;
-			message = String.format("計算結果は、%.2fです。", round(answer));
 		}
-		return message;
+		return answer;
 	}
 
 	static double round(double target) {
