@@ -8,24 +8,29 @@ class Calc2 {
 		boolean hasError = false;
 
 		try {
-			number1 = numberCheck(args[0]);
+			number1 = numberFormat(args[0]);
 		} catch(NumberFormatException e) {
 			System.out.println("1番目の引数は数値で入力してください。");
 			hasError = true;
 		}
 
 		try{
-			number2 = numberCheck(args[1]);
+			number2 = numberFormat(args[1]);
 		} catch(NumberFormatException e) {
 			System.out.println("2番目の引数は数値で入力してください。");
 			hasError = true;
 		}
 
-		String operator = operatorCheck(args[2]);
-
-		if(hasError == true) {
+		if(!operatorCheck(args[2])) {
+			System.out.println("入力できる記号は、「+」、「-」、「*」、「/」、「%」です。");
 			return;
 		}
+
+		if(hasError) {
+			return;
+		}
+
+		String operator = args[2];
 
 		String message = createMessage(number1, number2, operator);
 
@@ -43,18 +48,18 @@ class Calc2 {
 		}
 	}
 
-	static double numberCheck(String target) {
+	static double numberFormat(String target) {
 		double number;
 		number = Double.parseDouble(target);
 		return number;
 	}
 
-	static String operatorCheck(String operator) {
-		if(!(operator.matches("\\+") || operator.matches("\\-") || operator.matches("\\*") || operator.matches("\\/") || operator.matches("%"))) {
-			System.out.println("入力できる記号は、「+」、「-」、「*」、「/」、「%」です。");
-			System.exit(-1);
+	static boolean operatorCheck(String operator) {
+		boolean operatorError = true;
+		if(!(operator.matches("\\+|\\-|\\*|\\/|%"))) {
+			operatorError = false;
 		}
-		return operator;
+		return operatorError;
 	}
 
 	static String createMessage(double target1, double target2, String operator) {
