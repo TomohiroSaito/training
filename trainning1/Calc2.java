@@ -1,39 +1,55 @@
 class Calc2 {
 	public static void main(String args[]) {
+		if(inputCheck(args)) {
+			return;
+		}
+		double answer = calculation(args);
+		outMessage(answer);
+	}
 
-		lengthCheck(args);
-
-		double number1 = 0;
-		double number2 = 0;
+	static boolean inputCheck(String[] arguments) {
+		lengthCheck(arguments);
 		boolean hasError = false;
-
-		try {
-			number1 = numberFormat(args[0]);
-		} catch(NumberFormatException e) {
+		if(!numberCheck(arguments[0])) {
 			System.out.println("1番目の引数は数値で入力してください。");
 			hasError = true;
 		}
-
-		try{
-			number2 = numberFormat(args[1]);
-		} catch(NumberFormatException e) {
+		if(!numberCheck(arguments[1])) {
 			System.out.println("2番目の引数は数値で入力してください。");
-			hasError = true;
+			if(!hasError) {
+				hasError = true;
+			}
 		}
-
-		if(!operatorCheck(args[2])) {
+		if(!operatorCheck(arguments[2])) {
 			System.out.println("入力できる記号は、「+」、「-」、「*」、「/」、「%」です。");
-			return;
+			if(!hasError) {
+				hasError = true;
+			}
 		}
+		return hasError;
+	}
 
-		if(hasError) {
-			return;
+	static double calculation(String[] arguments) {
+		double answer;
+		double target1 = Double.parseDouble(arguments[0]);
+		double target2 = Double.parseDouble(arguments[1]);
+		String operator = arguments[2];
+		if(operator.equals("+")) {
+			answer = target1 + target2;
+		} else if(operator.equals("-")) {
+			answer = target1 - target2;
+		} else if(operator.equals("*")) {
+			answer = target1 * target2;
+		} else if(operator.equals("/")) {
+			answer = target1 / target2;
+		} else {
+			answer = target1 % target2;
 		}
+		return answer;
+	}
 
-		String operator = args[2];
-
-		String message = createMessage(number1, number2, operator);
-
+	static void outMessage(double answer) {
+		String message = createMessage(answer);
 		System.out.println(message);
 	}
 
@@ -48,40 +64,16 @@ class Calc2 {
 		}
 	}
 
-	static double numberFormat(String target) {
-		double number;
-		number = Double.parseDouble(target);
-		return number;
+	static boolean numberCheck(String target) {
+		return target.matches("^([1-9]\\d*|0)(\\.\\d+)?$");
 	}
 
 	static boolean operatorCheck(String operator) {
-		boolean operatorError = true;
-		if(!(operator.matches("\\+|\\-|\\*|\\/|%"))) {
-			operatorError = false;
-		}
-		return operatorError;
+		return operator.matches("\\+|\\-|\\*|\\/|%");
 	}
 
-	static String createMessage(double target1, double target2, String operator) {
-		double answer = calculation(target1, target2, operator);
-		String message = String.format("計算結果は、%.2fです。", round(answer));
-		return message;
-	}
-
-	static double calculation(double target1, double target2, String operator) {
-		double answer;
-		if(operator.equals("+")) {
-			answer = target1 + target2;
-		} else if(operator.equals("-")) {
-			answer = target1 - target2;
-		} else if(operator.equals("*")) {
-			answer = target1 * target2;
-		} else if(operator.equals("/")) {
-			answer = target1 / target2;
-		} else {
-			answer = target1 % target2;
-		}
-		return answer;
+	static String createMessage(double answer) {
+		return String.format("計算結果は、%.2fです。", round(answer));
 	}
 
 	static double round(double target) {
