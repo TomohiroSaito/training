@@ -6,6 +6,10 @@ public class PartyId {
 	public PartyId() {
 	}
 
+	public PartyId(int id) {
+		this.id = id;
+	}
+
 	public int getId() {
 		return id;
 	}

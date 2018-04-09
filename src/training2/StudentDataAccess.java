@@ -8,6 +8,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Calendar;
 
+import training2.studentmodel.party.PartyId;
+import training2.studentmodel.party.PartyName;
 import training2.studentmodel.student.Student;
 
 public class StudentDataAccess {
@@ -44,7 +46,7 @@ public class StudentDataAccess {
 
 		//クラス名から、クラスIDをデータベースより取得
 		String studentName = student.getStudentName().getName();
-		int classId = selectClassId(student);
+		PartyId partyId = selectClassId(student.getParty().getPartyName());
 
 		try {
 			connection = getConnection();
@@ -54,7 +56,7 @@ public class StudentDataAccess {
 			//INSERT文の実行
 			String sql = "INSERT INTO Student (class, name, created_at, updated_at) VALUES(?, ?, ?, ?)";
 			preparedStatement = connection.prepareStatement(sql);
-			preparedStatement.setInt(1, classId);
+			preparedStatement.setInt(1, partyId.getId());
 			preparedStatement.setString(2, studentName);
 			preparedStatement.setDate(3, date);
 			preparedStatement.setDate(4, date);
@@ -73,7 +75,7 @@ public class StudentDataAccess {
 		return result;
 	}
 
-	public int selectClassId(Student student) {
+	public PartyId selectClassId(PartyName partyName) {
 		int classId = 0;
 		//SELECT文が実行されたことの確認
 		boolean hasError = false;
@@ -81,15 +83,13 @@ public class StudentDataAccess {
 		PreparedStatement preparedStatement = null;
 		ResultSet resultSet = null;
 
-		String className = student.getParty().getPartyName().getName();
-
 		try {
 			connection = getConnection();
 
 			//SELECT文の実行
 			String sql = "SELECT class_id FROM Class WHERE class_name=?";
 			preparedStatement = connection.prepareStatement(sql);
-			preparedStatement.setString(1, className);
+			preparedStatement.setString(1, partyName.getName());
 			resultSet = preparedStatement.executeQuery();
 			while(resultSet.next()) {
 				classId = resultSet.getInt("class_id");
@@ -107,7 +107,7 @@ public class StudentDataAccess {
 				e.printStackTrace();
 			}
 		}
-		return classId;
+		return new PartyId(classId);
 	}
 
 	private void checkSelectError(boolean hasError) {
