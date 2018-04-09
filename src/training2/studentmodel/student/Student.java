@@ -10,6 +10,17 @@ public class Student {
 	private ArrayList<PersonalRecord> personalRecordList;
 
 	public Student() {
+		this.studentNumber = new StudentNumber();
+		this.studentName = new StudentName();
+		this.party = new Party();
+		this.personalRecordList = new ArrayList<PersonalRecord>();
+	}
+
+	public Student(StudentName studentName, Party party) {
+		this.studentName = studentName;
+		this.party = party;
+		this.studentNumber = new StudentNumber();
+		this.personalRecordList = new ArrayList<PersonalRecord>();
 	}
 
 	public StudentNumber getStudentNumber() {

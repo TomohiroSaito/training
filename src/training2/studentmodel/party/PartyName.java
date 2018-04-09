@@ -6,6 +6,10 @@ public class PartyName {
 	public PartyName() {
 	}
 
+	public PartyName(String name) {
+		this.name = name;
+	}
+
 	public String getName() {
 		return name;
 	}

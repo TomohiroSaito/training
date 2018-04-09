@@ -5,6 +5,8 @@ public class Subject {
 	private SubjectId subjectId;
 
 	public Subject() {
+		this.subjectName = new SubjectName();
+		this.subjectId = new SubjectId();
 	}
 
 	public SubjectName getSubjectName() {

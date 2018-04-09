@@ -5,6 +5,13 @@ public class Party {
 	PartyName partyName;
 
 	public Party() {
+		this.partyId = new PartyId();
+		this.partyName = new PartyName();
+	}
+
+	public Party(PartyName partyName) {
+		this.partyName = partyName;
+		this.partyId = new PartyId();
 	}
 
 	public PartyId getPartyId() {

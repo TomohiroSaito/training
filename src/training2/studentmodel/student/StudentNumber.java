@@ -6,6 +6,10 @@ public class StudentNumber {
 	public StudentNumber() {
 	}
 
+	public StudentNumber(int number) {
+
+	}
+
 	public int getNumber() {
 		return number;
 	}

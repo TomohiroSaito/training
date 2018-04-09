@@ -9,91 +9,23 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.Calendar;
 
 import training2.studentmodel.party.Party;
-import training2.studentmodel.party.PartyId;
 import training2.studentmodel.party.PartyName;
-import training2.studentmodel.student.PersonalRecord;
-import training2.studentmodel.student.Record;
 import training2.studentmodel.student.Student;
 import training2.studentmodel.student.StudentName;
-import training2.studentmodel.student.StudentNumber;
-import training2.studentmodel.subject.Subject;
-import training2.studentmodel.subject.SubjectId;
-import training2.studentmodel.subject.SubjectName;
 
 public class CreateStudents {
 
 	public static void main(String[] args) {
 		outMessage(1);
-		Student student = getStudent();
 		String studentName = inputName();
-		putStudentName(student, studentName);
 		outMessage(2);
 		String studentClass = inputClass();
-		putStudentClass(student, studentClass);
+		Student student = new Student(new StudentName(studentName), new Party(new PartyName(studentClass)));
 		insertStudent(student);
 		outMessage(3);
-	}
-
-	static Student getStudent() {
-		Student student = new Student();
-		StudentNumber studentNumber = new StudentNumber();
-		student.setStudentNumber(studentNumber);
-		StudentName studentName = new StudentName();
-		student.setStudentName(studentName);
-		Party party = getParty();
-		student.setParty(party);
-		ArrayList<PersonalRecord> personalRecordList = getParsonalRecordList();
-		student.setPersonalRecordList(personalRecordList);
-		return student;
-	}
-
-	static Party getParty() {
-		Party party = new Party();
-		PartyId partyId = new PartyId();
-		PartyName partyName = new PartyName();
-		party.setPartyId(partyId);
-		party.setPartyName(partyName);
-		return party;
-	}
-
-	static ArrayList<PersonalRecord> getParsonalRecordList() {
-		ArrayList<PersonalRecord> personalRecordList = new ArrayList<PersonalRecord>();
-		for(int i=0; i<5; ++i) {
-			PersonalRecord personalRecord = getPersonalRecord();
-			personalRecordList.add(personalRecord);
-		}
-		return personalRecordList;
-	}
-
-	static PersonalRecord getPersonalRecord() {
-		PersonalRecord personalRecord = new PersonalRecord();
-		Record record = new Record();
-		personalRecord.setRecord(record);
-		Subject subject = new Subject();
-		SubjectName subjectName = new SubjectName();
-		SubjectId subjectId = new SubjectId();
-		subject.setSubjectName(subjectName);
-		subject.setSubjectId(subjectId);
-		return personalRecord;
-	}
-
-	static Student putStudentClass(Student student, String target) {
-		student.getParty().getPartyName().setName(target);
-		return student;
-	}
-
-	static Student putStudentName(Student student, String target) {
-		student.getStudentName().setName(target);
-		return student;
-	}
-
-	static Student putClassId(Student student, int classId) {
-		student.getParty().getPartyId().setId(classId);
-		return student;
 	}
 
 	static void outMessage(int number) {
@@ -214,7 +146,7 @@ public class CreateStudents {
 			resultSet = preparedStatement.executeQuery();
 			while(resultSet.next()) {
 				int classId = resultSet.getInt("class_id");
-				putClassId(student, classId);
+				student.getParty().getPartyId().setId(classId);
 			}
 		} catch(SQLException e) {
 			e.printStackTrace();
