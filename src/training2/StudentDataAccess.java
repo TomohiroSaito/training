@@ -2,7 +2,6 @@ package training2;
 
 import java.sql.Connection;
 import java.sql.Date;
-import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -14,42 +13,19 @@ import training2.studentmodel.student.Student;
 
 public class StudentDataAccess {
 
-	public Connection getConnection() {
-		Connection connection = null;
-
-		//接続文字列
-		String url = "jdbc:postgresql://localhost:5433/postgres";
-		String user = "postgres";
-		String password = "postgres";
-
-		try {
-			Class.forName("org.postgresql.Driver");//ClassNotFoundException投げる
-
-			//PostgreSQLへ接続
-			connection = DriverManager.getConnection(url, user, password);
-
-			//自動コミットOFF
-			connection.setAutoCommit(false);
-
-		} catch(ClassNotFoundException e) {
-			e.printStackTrace();
-		} catch(SQLException e) {
-			e.printStackTrace();
-		}
-		return connection;
-	}
-
 	public int insertStudent(Student student) {
 		int result = 0;
 		Connection connection = null;
 		PreparedStatement preparedStatement = null;
+
+		DBManager dbManager = new DBManager();
 
 		//クラス名から、クラスIDをデータベースより取得
 		String studentName = student.getStudentName().getName();
 		PartyId partyId = selectClassId(student.getParty().getPartyName());
 
 		try {
-			connection = getConnection();
+			connection = dbManager.getConnection();
 
 			Date date = new Date(Calendar.getInstance().getTimeInMillis());
 
@@ -83,8 +59,10 @@ public class StudentDataAccess {
 		PreparedStatement preparedStatement = null;
 		ResultSet resultSet = null;
 
+		DBManager dbManager = new DBManager();
+
 		try {
-			connection = getConnection();
+			connection = dbManager.getConnection();
 
 			//SELECT文の実行
 			String sql = "SELECT class_id FROM Class WHERE class_name=?";
