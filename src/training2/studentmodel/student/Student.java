@@ -23,6 +23,13 @@ public class Student {
 		this.personalRecordList = new ArrayList<PersonalRecord>();
 	}
 
+	public Student(StudentNumber studentNumber, Party party, StudentName studentName) {
+		this.studentNumber = studentNumber;
+		this.party = party;
+		this.studentName = studentName;
+		this.personalRecordList = new ArrayList<PersonalRecord>();
+	}
+
 	public StudentNumber getStudentNumber() {
 		return studentNumber;
 	}

@@ -7,7 +7,7 @@ public class StudentNumber {
 	}
 
 	public StudentNumber(int number) {
-
+		this.number = number;
 	}
 
 	public int getNumber() {

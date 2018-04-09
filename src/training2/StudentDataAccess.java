@@ -5,11 +5,15 @@ import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.Calendar;
 
+import training2.studentmodel.party.Party;
 import training2.studentmodel.party.PartyId;
 import training2.studentmodel.party.PartyName;
 import training2.studentmodel.student.Student;
+import training2.studentmodel.student.StudentName;
+import training2.studentmodel.student.StudentNumber;
 
 public class StudentDataAccess {
 
@@ -86,6 +90,50 @@ public class StudentDataAccess {
 			}
 		}
 		return new PartyId(classId);
+	}
+
+	public ArrayList<Student> selectClassList(PartyId partyId) {
+		Connection connection = null;
+		PreparedStatement preparedStatement = null;
+		ResultSet rs = null;
+
+		DBManager dbManager = new DBManager();
+
+		ArrayList<Student> students = new ArrayList<Student>();
+
+		try {
+			connection = dbManager.getConnection();
+
+
+			//SELECT文の実行
+			String sql = "SELECT Student.number,Class.class_name,Student.name FROM Student INNER JOIN Class ON Student.class = Class.class_id WHERE Student.class=?";
+			preparedStatement = connection.prepareStatement(sql);
+			preparedStatement.setInt(1, partyId.getId());
+			rs = preparedStatement.executeQuery();
+			int number = 0;
+			String className = null;
+			String name = null;
+			while(rs.next()) {
+				number = rs.getInt("number");
+				StudentNumber studentNumber = new StudentNumber(number);
+				className = rs.getString("class_name");
+				PartyName partyName = new PartyName(className);
+				name = rs.getString("name");
+				StudentName studentName = new StudentName(name);
+				students.add(new Student(studentNumber, new Party(partyName), studentName));
+			}
+		} catch(SQLException e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				if(preparedStatement != null) preparedStatement.close();
+				if(rs != null) rs.close();
+				if(connection != null) connection.close();
+			} catch(SQLException e) {
+				e.printStackTrace();
+			}
+		}
+		return students;
 	}
 
 	private void checkSelectError(boolean hasError) {
