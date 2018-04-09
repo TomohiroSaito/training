@@ -44,9 +44,7 @@ public class StudentDataAccess {
 
 		//クラス名から、クラスIDをデータベースより取得
 		String studentName = student.getStudentName().getName();
-		Student resultStudent = selectClassId(student);
-
-		int classId = resultStudent.getParty().getPartyId().getId();
+		int classId = selectClassId(student);
 
 		try {
 			connection = getConnection();
@@ -75,7 +73,10 @@ public class StudentDataAccess {
 		return result;
 	}
 
-	public Student selectClassId(Student student) {
+	public int selectClassId(Student student) {
+		int classId = 0;
+		//SELECT文が実行されたことの確認
+		boolean hasError = false;
 		Connection connection = null;
 		PreparedStatement preparedStatement = null;
 		ResultSet resultSet = null;
@@ -91,9 +92,10 @@ public class StudentDataAccess {
 			preparedStatement.setString(1, className);
 			resultSet = preparedStatement.executeQuery();
 			while(resultSet.next()) {
-				int classId = resultSet.getInt("class_id");
-				student.getParty().getPartyId().setId(classId);
+				classId = resultSet.getInt("class_id");
+				hasError = true;
 			}
+			checkSelectError(hasError);
 		} catch(SQLException e) {
 			e.printStackTrace();
 		} finally {
@@ -105,7 +107,13 @@ public class StudentDataAccess {
 				e.printStackTrace();
 			}
 		}
-		return student;
+		return classId;
+	}
+
+	private void checkSelectError(boolean hasError) {
+		if(!hasError) {
+			System.out.println("SELECT文は実行されませんでした。");
+		}
 	}
 
 }
