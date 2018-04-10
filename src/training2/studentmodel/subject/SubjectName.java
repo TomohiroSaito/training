@@ -6,6 +6,10 @@ public class SubjectName {
 	public SubjectName() {
 	}
 
+	public SubjectName(String name) {
+		this.name = name;
+	}
+
 	public String getName() {
 		return name;
 	}

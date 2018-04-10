@@ -9,6 +9,11 @@ public class Subject {
 		this.subjectId = new SubjectId();
 	}
 
+	public Subject(SubjectName subjectName, SubjectId subjectId) {
+		this.subjectName = subjectName;
+		this.subjectId = subjectId;
+	}
+
 	public SubjectName getSubjectName() {
 		return subjectName;
 	}

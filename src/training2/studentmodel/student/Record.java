@@ -6,6 +6,10 @@ public class Record {
 	public Record() {
 	}
 
+	public Record(int record) {
+		this.record = record;
+	}
+
 	public int getRecord() {
 		return record;
 	}

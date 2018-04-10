@@ -6,6 +6,10 @@ public class SubjectId {
 	public SubjectId() {
 	}
 
+	public SubjectId(int id) {
+		this.id = id;
+	}
+
 	public int getId() {
 		return id;
 	}
