@@ -7,35 +7,30 @@ import java.util.ArrayList;
 
 import training2.studentmodel.student.PersonalRecord;
 import training2.studentmodel.student.Record;
-import training2.studentmodel.student.StudentNumber;
+import training2.studentmodel.student.Student;
 import training2.studentmodel.subject.Subject;
 import training2.studentmodel.subject.SubjectId;
 import training2.studentmodel.subject.SubjectName;
 
-public class RegisteStudentsRecode {
-	static final int INPUT_NUMBER = 1;
-	static final int CONFIRM_INFORMATION = 2;
-	static final int COMPLETE_REGISTER = 3;
-	static final int SELECT_SAY = 4;
+public class StudentsDetail {
 
 	public static void main(String[] args) throws IOException {
-		outMessage(INPUT_NUMBER);
+		outMessage(1);
 		int number = inputNumber();
-		StudentNumber studentNumber = new StudentNumber(number);
 		StudentDataAccess studentDataAccess = new StudentDataAccess();
-		boolean exist = studentDataAccess.existStudent(studentNumber);
+		boolean exist = studentDataAccess.existStudent(number);
 		checkExistStudent(exist);
-		ArrayList<PersonalRecord> personalRecords = inputRecords();
-		outMessage(CONFIRM_INFORMATION);
-		confirmRegisterInformation(studentNumber, personalRecords);
-		studentDataAccess.insertRecords(studentNumber, personalRecords);
-		outMessage(COMPLETE_REGISTER);
+		Student student = studentDataAccess.selectStudent(number);
+		outMessage(2);
+		confirmRegisterInformation(number, personalRecords);
+		studentDataAccess.insertRecords(number, personalRecords);
+		outMessage(3);
 	}
 
 	static void outMessage(int number) {
 		switch(number) {
 			case 1:
-				System.out.println("成績を登録する生徒の生徒番号を入力してください。");
+				System.out.println("情報を確認する生徒の生徒番号を入力してください。");
 				break;
 			case 2:
 				System.out.println("登録する情報に間違いはありませんか？");
@@ -97,36 +92,36 @@ public class RegisteStudentsRecode {
 		return judge;
 	}
 
-	static String createConfirmRecordsMessage(int number, Record record) {
+	static String createConfirmRecordsMessage(int number, int record) {
 		String message = null;
 		switch(number) {
 			case 0:
-				message = String.format("英語:%d点\t", record.getRecord());
+				message = String.format("英語:%d点\t", record);
 				break;
 			case 1:
-				message = String.format("数学:%d点\t", record.getRecord());
+				message = String.format("数学:%d点\t", record);
 				break;
 			case 2:
-				message = String.format("国語:%d点\t", record.getRecord());
+				message = String.format("国語:%d点\t", record);
 				break;
 			case 3:
-				message = String.format("社会:%d点\t", record.getRecord());
+				message = String.format("社会:%d点\t", record);
 				break;
 			case 4:
-				message = String.format("理科:%d点\t", record.getRecord());
+				message = String.format("理科:%d点\t", record);
 				break;
 		}
 		return message;
 	}
 
-	static void confirmRegisterInformation(StudentNumber studentNumber, ArrayList<PersonalRecord> personalRecords) {
-		StringBuilder message = new StringBuilder(String.format("生徒番号:%d\n", studentNumber.getNumber()));
+	static void confirmRegisterInformation(int number, ArrayList<PersonalRecord> personalRecords) {
+		StringBuilder message = new StringBuilder(String.format("生徒番号:%d\n", number));
 		for(int i = 0; i < 5; ++i) {
 			PersonalRecord personalRecord = personalRecords.get(i);
-			message.append(createConfirmRecordsMessage(i, personalRecord.getRecord()));
+			message.append(createConfirmRecordsMessage(i, personalRecord.getRecord().getRecord()));
 		}
 		System.out.println(message);
-		outMessage(SELECT_SAY);
+		outMessage(4);
 		if(!judge()) {
 			System.out.println("最初からやり直してください。");
 			System.exit(-1);

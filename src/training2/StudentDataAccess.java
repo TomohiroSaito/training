@@ -139,7 +139,7 @@ public class StudentDataAccess {
 		return students;
 	}
 
-	public void insertRecords(int number, ArrayList<PersonalRecord> personalRecords) {
+	public void insertRecords(StudentNumber studentNumber, ArrayList<PersonalRecord> personalRecords) {
 		boolean resultError = false;
 		Connection connection = null;
 		PreparedStatement preparedStatement = null;
@@ -155,7 +155,7 @@ public class StudentDataAccess {
 			for(PersonalRecord personalRecord : personalRecords) {
 				String sql = "INSERT INTO Record (number, subject_id, record, created_at, updated_at) VALUES(?, ?, ?, ?, ?)";
 				preparedStatement = connection.prepareStatement(sql);
-				preparedStatement.setInt(1, number);
+				preparedStatement.setInt(1, studentNumber.getNumber());
 				preparedStatement.setInt(2, personalRecord.getSubject().getSubjectId().getId());
 				preparedStatement.setInt(3, personalRecord.getRecord().getRecord());
 				preparedStatement.setDate(4, date);
@@ -215,7 +215,7 @@ public class StudentDataAccess {
 		return new SubjectId(subjectId);
 	}
 
-	public boolean existStudent(int number) {
+	public boolean existStudent(StudentNumber studentNumber) {
 		boolean exist = false;
 		int numberCount = 0;
 		//SELECT文が実行されたことの確認
@@ -232,7 +232,7 @@ public class StudentDataAccess {
 			//SELECT文の実行
 			String sql = "SELECT count(*) FROM Student WHERE number=?";
 			preparedStatement = connection.prepareStatement(sql);
-			preparedStatement.setInt(1, number);
+			preparedStatement.setInt(1, studentNumber.getNumber());
 			resultSet = preparedStatement.executeQuery();
 			while(resultSet.next()) {
 				numberCount = resultSet.getInt("count");
@@ -275,4 +275,84 @@ public class StudentDataAccess {
 		return exist;
 	}
 
+/*	public Student selectStudent(int number) {
+		Connection connection = null;
+		PreparedStatement preparedStatement = null;
+		ResultSet rs = null;
+
+		DBManager dbManager = new DBManager();
+
+//		Student student = new Student();
+
+		try {
+			connection = dbManager.getConnection();
+
+
+			//SELECT文の実行
+			String sql = "SELECT Class.class_name,Student.name,Record.subject_id,Record.record,Subject.subject_name FROM Student INNER JOIN Class ON Student.class = Class.class_id INNER JOIN Record ON Student.number=Record.number INNER JOIN Subject ON Record.subject_id=Subject.subject_id WHERE Student.number=? ORDER BY Subject.subject_id ASC";
+			preparedStatement = connection.prepareStatement(sql);
+			preparedStatement.setInt(1, number);
+			rs = preparedStatement.executeQuery();
+			String className = null;
+			String name = null;
+			while(rs.next()) {
+				className = rs.getString("class_name");
+				name = rs.getString("name");
+				int tempSubjectId = rs.getInt("subject_id");
+				SubjectId subjectId = new SubjectId(tempSubjectId);
+				int tempRecord = rs.getInt("record");
+				Record record = new Record(tempRecord);
+			}
+
+		} catch(SQLException e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				if(preparedStatement != null) preparedStatement.close();
+				if(rs != null) rs.close();
+				if(connection != null) connection.close();
+			} catch(SQLException e) {
+				e.printStackTrace();
+			}
+		}
+		return null;
+	}
+
+	public ArrayList<PersonalRecord> selectPersonalRecords(int number) {
+		Connection connection = null;
+		PreparedStatement preparedStatement = null;
+		ResultSet rs = null;
+
+		DBManager dbManager = new DBManager();
+
+		try {
+			connection = dbManager.getConnection();
+
+
+			//SELECT文の実行
+			String sql = "SELECT Record.subject_id,Record.record,Subject.subject_name FROM Record INNER JOIN Subject ON Student.number=Record.number INNER JOIN Subject ON Record.subject_id=Subject.subject_id WHERE Student.number=? ORDER BY Subject.subject_id ASC";
+			preparedStatement = connection.prepareStatement(sql);
+			preparedStatement.setInt(1, number);
+			rs = preparedStatement.executeQuery();
+			String className = null;
+			String name = null;
+			while(rs.next()) {
+				className = rs.getString("class_name");
+				name = rs.getString("name");
+			}
+
+		} catch(SQLException e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				if(preparedStatement != null) preparedStatement.close();
+				if(rs != null) rs.close();
+				if(connection != null) connection.close();
+			} catch(SQLException e) {
+				e.printStackTrace();
+			}
+		}
+		return null;
+	}
+*/
 }
