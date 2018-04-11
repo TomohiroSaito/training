@@ -12,22 +12,22 @@ public class StudentsDetail {
 	static final String INPUT_NUMBER = "情報を確認する生徒の生徒番号を入力してください。";
 
 	public static void main(String[] args) throws IOException {
-		StudentNumber studentNumber = inputExistStudentRecord();
+		StudentNumber studentNumber = inputExistStudent();
 		StudentDataAccess studentDataAccess = new StudentDataAccess();
 		Student student = studentDataAccess.selectStudentDetail(studentNumber);
 		String message = createStudentDetailMessage(student);
 		outStudentDetail(message);
 	}
 
-	static StudentNumber inputExistStudentRecord() {
+	static StudentNumber inputExistStudent() {
 		boolean exist = false;
 		StudentNumber studentNumber = null;
 		StudentDataAccess studentDataAccess = new StudentDataAccess();
 		do {
 			int number = repeatInputNumber();
 			studentNumber = new StudentNumber(number);
-			exist = studentDataAccess.existRecord(studentNumber);
-			checkExistRecord(exist);
+			exist = studentDataAccess.existStudent(studentNumber);
+			checkExistStudent(exist);
 		} while(!exist);
 
 		return studentNumber;
@@ -51,13 +51,17 @@ public class StudentsDetail {
 		int sumRecord = 0;
 		String apenndMessage = String.format("生徒番号:\t%d\nクラス:\t\t%s\n名前:\t\t%s\n", student.getStudentNumber().getNumber(), student.getParty().getPartyName().getName(), student.getStudentName().getName());
 		tempMessage.append(apenndMessage);
-		for(PersonalRecord personalRecord : student.getPersonalRecordList()) {
-			apenndMessage = String.format("%s:\t\t%d点\n", personalRecord.getSubject().getSubjectName().getName(), personalRecord.getRecord().getRecord());
+		if(student.getPersonalRecordList().size() == 0) {
+			tempMessage.append("成績は未設定です。\n");
+		} else {
+			for(PersonalRecord personalRecord : student.getPersonalRecordList()) {
+				apenndMessage = String.format("%s:\t\t%d点\n", personalRecord.getSubject().getSubjectName().getName(), personalRecord.getRecord().getRecord());
+				tempMessage.append(apenndMessage);
+				sumRecord += personalRecord.getRecord().getRecord();
+			}
+			apenndMessage = String.format("成績の合計:\t%d点\n", sumRecord);
 			tempMessage.append(apenndMessage);
-			sumRecord += personalRecord.getRecord().getRecord();
 		}
-		apenndMessage = String.format("成績の合計:\t%d点\n", sumRecord);
-		tempMessage.append(apenndMessage);
 		return new String(tempMessage);
 	}
 
@@ -103,9 +107,9 @@ public class StudentsDetail {
 		}
 		return inputString;
 	}
-	static void checkExistRecord(boolean exist) {
+	static void checkExistStudent(boolean exist) {
 		if(!exist) {
-			System.out.println("その番号の生徒の成績は登録されていません。");
+			System.out.println("存在しない生徒番号です。");
 		}
 	}
 
