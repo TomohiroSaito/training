@@ -13,10 +13,10 @@ import training2.studentmodel.subject.SubjectId;
 import training2.studentmodel.subject.SubjectName;
 
 public class RegisteStudentsRecode {
-	static final int INPUT_NUMBER = 1;
-	static final int CONFIRM_INFORMATION = 2;
-	static final int COMPLETE_REGISTER = 3;
-	static final int SELECT_SAY = 4;
+	static final String INPUT_NUMBER = "成績を登録する生徒の生徒番号を入力してください。";
+	static final String CONFIRM_INFORMATION = "登録する情報に間違いはありませんか？";
+	static final String COMPLETE_REGISTER = "登録が完了しました。";
+	static final String SELECT_SAY = "yes/no?";
 
 	public static void main(String[] args) throws IOException {
 		outMessage(INPUT_NUMBER);
@@ -32,21 +32,8 @@ public class RegisteStudentsRecode {
 		outMessage(COMPLETE_REGISTER);
 	}
 
-	static void outMessage(int number) {
-		switch(number) {
-			case 1:
-				System.out.println("成績を登録する生徒の生徒番号を入力してください。");
-				break;
-			case 2:
-				System.out.println("登録する情報に間違いはありませんか？");
-				break;
-			case 3:
-				System.out.println("登録が完了しました。");
-				break;
-			case 4:
-				System.out.println("yes/no?");
-				break;
-		}
+	static void outMessage(String message) {
+		System.out.println(message);
 	}
 
 	static String outRecordsMessage(int number) {
@@ -97,34 +84,20 @@ public class RegisteStudentsRecode {
 		return judge;
 	}
 
-	static String createConfirmRecordsMessage(int number, Record record) {
-		String message = null;
-		switch(number) {
-			case 0:
-				message = String.format("英語:%d点\t", record.getRecord());
-				break;
-			case 1:
-				message = String.format("数学:%d点\t", record.getRecord());
-				break;
-			case 2:
-				message = String.format("国語:%d点\t", record.getRecord());
-				break;
-			case 3:
-				message = String.format("社会:%d点\t", record.getRecord());
-				break;
-			case 4:
-				message = String.format("理科:%d点\t", record.getRecord());
-				break;
+	static StringBuilder createConfirmRecordsMessage(ArrayList<PersonalRecord> personalRecords) {
+		StringBuilder message = new StringBuilder("");
+		for(int i = 0; i < 5; ++i) {
+			PersonalRecord personalRecord = personalRecords.get(i);
+			String subjectName = personalRecord.getSubject().getSubjectName().getName();
+			int record = personalRecord.getRecord().getRecord();
+			String appendMessage = String.format("%s:%d点\t", subjectName, record);
+			message.append(appendMessage);
 		}
 		return message;
 	}
 
 	static void confirmRegisterInformation(StudentNumber studentNumber, ArrayList<PersonalRecord> personalRecords) {
-		StringBuilder message = new StringBuilder(String.format("生徒番号:%d\n", studentNumber.getNumber()));
-		for(int i = 0; i < 5; ++i) {
-			PersonalRecord personalRecord = personalRecords.get(i);
-			message.append(createConfirmRecordsMessage(i, personalRecord.getRecord()));
-		}
+		StringBuilder message = createConfirmRecordsMessage(personalRecords);
 		System.out.println(message);
 		outMessage(SELECT_SAY);
 		if(!judge()) {
