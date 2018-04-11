@@ -12,9 +12,11 @@ import training2.studentmodel.party.Party;
 import training2.studentmodel.party.PartyId;
 import training2.studentmodel.party.PartyName;
 import training2.studentmodel.student.PersonalRecord;
+import training2.studentmodel.student.Record;
 import training2.studentmodel.student.Student;
 import training2.studentmodel.student.StudentName;
 import training2.studentmodel.student.StudentNumber;
+import training2.studentmodel.subject.Subject;
 import training2.studentmodel.subject.SubjectId;
 import training2.studentmodel.subject.SubjectName;
 
@@ -275,14 +277,14 @@ public class StudentDataAccess {
 		return exist;
 	}
 
-/*	public Student selectStudent(int number) {
+	public Student selectStudentDetail(StudentNumber studentNumber) {
 		Connection connection = null;
 		PreparedStatement preparedStatement = null;
 		ResultSet rs = null;
 
 		DBManager dbManager = new DBManager();
 
-//		Student student = new Student();
+		Student student = null;
 
 		try {
 			connection = dbManager.getConnection();
@@ -291,19 +293,63 @@ public class StudentDataAccess {
 			//SELECT文の実行
 			String sql = "SELECT Class.class_name,Student.name,Record.subject_id,Record.record,Subject.subject_name FROM Student INNER JOIN Class ON Student.class = Class.class_id INNER JOIN Record ON Student.number=Record.number INNER JOIN Subject ON Record.subject_id=Subject.subject_id WHERE Student.number=? ORDER BY Subject.subject_id ASC";
 			preparedStatement = connection.prepareStatement(sql);
-			preparedStatement.setInt(1, number);
+			preparedStatement.setInt(1, studentNumber.getNumber());
 			rs = preparedStatement.executeQuery();
 			String className = null;
-			String name = null;
-			while(rs.next()) {
-				className = rs.getString("class_name");
-				name = rs.getString("name");
-				int tempSubjectId = rs.getInt("subject_id");
-				SubjectId subjectId = new SubjectId(tempSubjectId);
-				int tempRecord = rs.getInt("record");
-				Record record = new Record(tempRecord);
-			}
+			PartyName partyName = null;
 
+			String name = null;
+			StudentName studentName = null;
+
+			String tempSubjectName = null;
+			SubjectName subjectName = null;
+
+			int tempSubjectId = 0;
+			SubjectId subjectId = null;
+
+			Subject subject = null;
+
+			Party party = null;
+
+			int tempRecord = 0;
+			Record record = null;
+
+			PersonalRecord personalRecord = null;
+
+			ArrayList<PersonalRecord> personalRecords = new ArrayList<PersonalRecord>();
+
+			if(rs.next()) {
+				//生徒名取得
+				name = rs.getString("name");
+				studentName = new StudentName(name);
+
+				//クラス名取得
+				className = rs.getString("class_name");
+				partyName = new PartyName(className);
+
+				party = new Party(partyName);
+
+				do {
+					//教科ID取得
+					tempSubjectId = rs.getInt("subject_id");
+					subjectId = new SubjectId(tempSubjectId);
+
+					//教科名取得
+					tempSubjectName = rs.getString("subject_name");
+					subjectName = new SubjectName(tempSubjectName);
+
+					subject = new Subject(subjectName, subjectId);
+
+					//成績取得
+					tempRecord = rs.getInt("record");
+					record = new Record(tempRecord);
+
+					personalRecord = new PersonalRecord(subject, record);
+
+					personalRecords.add(personalRecord);
+				} while(rs.next());
+			}
+			student = new Student(studentNumber, studentName, party, personalRecords);
 		} catch(SQLException e) {
 			e.printStackTrace();
 		} finally {
@@ -315,44 +361,45 @@ public class StudentDataAccess {
 				e.printStackTrace();
 			}
 		}
-		return null;
+		return student;
 	}
 
-	public ArrayList<PersonalRecord> selectPersonalRecords(int number) {
+	public boolean existRecord(StudentNumber studentNumber) {
+		boolean exist = false;
+		int numberCount = 0;
+		//SELECT文が実行されたことの確認
+		boolean hasError = false;
 		Connection connection = null;
 		PreparedStatement preparedStatement = null;
-		ResultSet rs = null;
+		ResultSet resultSet = null;
 
 		DBManager dbManager = new DBManager();
 
 		try {
 			connection = dbManager.getConnection();
 
-
 			//SELECT文の実行
-			String sql = "SELECT Record.subject_id,Record.record,Subject.subject_name FROM Record INNER JOIN Subject ON Student.number=Record.number INNER JOIN Subject ON Record.subject_id=Subject.subject_id WHERE Student.number=? ORDER BY Subject.subject_id ASC";
+			String sql = "SELECT count(*) FROM Record WHERE number=?";
 			preparedStatement = connection.prepareStatement(sql);
-			preparedStatement.setInt(1, number);
-			rs = preparedStatement.executeQuery();
-			String className = null;
-			String name = null;
-			while(rs.next()) {
-				className = rs.getString("class_name");
-				name = rs.getString("name");
+			preparedStatement.setInt(1, studentNumber.getNumber());
+			resultSet = preparedStatement.executeQuery();
+			while(resultSet.next()) {
+				numberCount = resultSet.getInt("count");
+				hasError = true;
 			}
-
+			checkSelectError(hasError);
+			exist = checkExist(numberCount);
 		} catch(SQLException e) {
 			e.printStackTrace();
 		} finally {
 			try {
 				if(preparedStatement != null) preparedStatement.close();
-				if(rs != null) rs.close();
+				if(resultSet != null) resultSet.close();
 				if(connection != null) connection.close();
 			} catch(SQLException e) {
 				e.printStackTrace();
 			}
 		}
-		return null;
+		return exist;
 	}
-*/
 }

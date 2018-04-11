@@ -4,122 +4,82 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 
+import training2.studentmodel.student.PersonalRecord;
+import training2.studentmodel.student.Student;
 import training2.studentmodel.student.StudentNumber;
 
 public class StudentsDetail {
 	static final String INPUT_NUMBER = "情報を確認する生徒の生徒番号を入力してください。";
 
 	public static void main(String[] args) throws IOException {
+		StudentNumber studentNumber = inputExistStudentRecord();
+		StudentDataAccess studentDataAccess = new StudentDataAccess();
+		Student student = studentDataAccess.selectStudentDetail(studentNumber);
+		String message = createStudentDetailMessage(student);
+		outStudentDetail(message);
+	}
+
+	static StudentNumber inputExistStudentRecord() {
 		boolean exist = false;
+		StudentNumber studentNumber = null;
+		StudentDataAccess studentDataAccess = new StudentDataAccess();
+		do {
+			int number = repeatInputNumber();
+			studentNumber = new StudentNumber(number);
+			exist = studentDataAccess.existRecord(studentNumber);
+			checkExistRecord(exist);
+		} while(!exist);
+
+		return studentNumber;
+	}
+
+	static int repeatInputNumber() {
+		int number = 0;
 		do {
 			outMessage(INPUT_NUMBER);
-			int number = inputNumber();
-			StudentDataAccess studentDataAccess = new StudentDataAccess();
-			StudentNumber studentNumber = new StudentNumber(number);
-			exist = studentDataAccess.existStudent(studentNumber);
-			checkExistStudent(exist);
-		} while(!exist);
+			number = inputNumber();
+		} while(number == -1);
+		return number;
+	}
+
+	static void outStudentDetail(String message) {
+		System.out.println(message);
+	}
+
+	static String createStudentDetailMessage(Student student) {
+		StringBuilder tempMessage = new StringBuilder("");
+		int sumRecord = 0;
+		String apenndMessage = String.format("生徒番号:\t%d\nクラス:\t\t%s\n名前:\t\t%s\n", student.getStudentNumber().getNumber(), student.getParty().getPartyName().getName(), student.getStudentName().getName());
+		tempMessage.append(apenndMessage);
+		for(PersonalRecord personalRecord : student.getPersonalRecordList()) {
+			apenndMessage = String.format("%s:\t\t%d点\n", personalRecord.getSubject().getSubjectName().getName(), personalRecord.getRecord().getRecord());
+			tempMessage.append(apenndMessage);
+			sumRecord += personalRecord.getRecord().getRecord();
+		}
+		apenndMessage = String.format("成績の合計:\t%d点\n", sumRecord);
+		tempMessage.append(apenndMessage);
+		return new String(tempMessage);
 	}
 
 	static void outMessage(String message) {
 		System.out.println(message);
 	}
 
-
-/*	static String outRecordsMessage(int number) {
-		String subjectName = null;
-		switch(number) {
-			case 0:
-				System.out.println("英語の成績を入力してください。");
-				subjectName = "英語";
-				break;
-			case 1:
-				System.out.println("数学の成績を入力してください。");
-				subjectName = "数学";
-				break;
-			case 2:
-				System.out.println("国語の成績を入力してください。");
-				subjectName = "国語";
-				break;
-			case 3:
-				System.out.println("社会の成績を入力してください。");
-				subjectName = "社会";
-				break;
-			case 4:
-				System.out.println("理科の成績を入力してください。");
-				subjectName = "理科";
-				break;
-		}
-		return subjectName;
-	}
-
-	static boolean judge() {
-		String select = input();
-		confirmError(select);
-		return judgeConfirmPattern(select);
-	}
-
-	static void confirmError(String select) {
-		if(!select.matches("yes|no")) {
-			System.out.println("yesかnoを入力してください。");
-			System.exit(-1);
-		}
-	}
-
-	static boolean judgeConfirmPattern(String select) {
-		boolean judge = false;
-		if(select.matches("yes")) {
-			judge = true;
-		}
-		return judge;
-	}
-
-	static String createConfirmRecordsMessage(int number, int record) {
-		String message = null;
-		switch(number) {
-			case 0:
-				message = String.format("英語:%d点\t", record);
-				break;
-			case 1:
-				message = String.format("数学:%d点\t", record);
-				break;
-			case 2:
-				message = String.format("国語:%d点\t", record);
-				break;
-			case 3:
-				message = String.format("社会:%d点\t", record);
-				break;
-			case 4:
-				message = String.format("理科:%d点\t", record);
-				break;
-		}
-		return message;
-	}
-
-	static void confirmRegisterInformation(int number, ArrayList<PersonalRecord> personalRecords) {
-		StringBuilder message = new StringBuilder(String.format("生徒番号:%d\n", number));
-		for(int i = 0; i < 5; ++i) {
-			PersonalRecord personalRecord = personalRecords.get(i);
-			message.append(createConfirmRecordsMessage(i, personalRecord.getRecord().getRecord()));
-		}
-		System.out.println(message);
-		outMessage(4);
-		if(!judge()) {
-			System.out.println("最初からやり直してください。");
-		}
-	}*/
-
 	static int inputNumber() {
 		String stringNumber = input();
-		numberError(stringNumber);
+		if(numberError(stringNumber)) {
+			return -1;
+		}
 		return numberFormat(stringNumber);
 	}
 
-	static void numberError(String target) {
+	static boolean numberError(String target) {
+		boolean hasError = false;
 		if(!target.matches("[0-9]*")) {
 			System.out.println("数字を入力してください。");
-			System.exit(-1);
+			hasError = true;
 		}
+		return hasError;
 	}
 
 	static int numberFormat(String target) {
@@ -143,39 +103,9 @@ public class StudentsDetail {
 		}
 		return inputString;
 	}
-
-/*	static ArrayList<PersonalRecord> inputRecords() {
-		ArrayList<PersonalRecord> personalRecords = new ArrayList<PersonalRecord>();
-		for(int i = 0; i < 5; ++i) {
-			String tempSubjectName = outRecordsMessage(i);
-			StudentDataAccess studentDataAccess = new StudentDataAccess();
-			int tempRecord = inputRecord();
-			SubjectName subjectName = new SubjectName(tempSubjectName);
-			SubjectId subjectId = studentDataAccess.selectSubjectId(subjectName);
-			Subject subject = new Subject(subjectName, subjectId);
-			Record record = new Record(tempRecord);
-			PersonalRecord personalRecord = new PersonalRecord(subject, record);
-			personalRecords.add(personalRecord);
-		}
-		return personalRecords;
-	}
-
-	static int inputRecord() {
-		int record = inputNumber();
-		recordRangeCheck(record);
-		return record;
-	}
-
-	static void recordRangeCheck(int target) {
-		if(target < 1 || 100 < target) {
-			System.out.println("成績は1~100の値です。");
-			System.exit(-1);
-		}
-	}*/
-
-	static void checkExistStudent(boolean exist) {
+	static void checkExistRecord(boolean exist) {
 		if(!exist) {
-			System.out.println("存在しない生徒番号です。");
+			System.out.println("その番号の生徒の成績は登録されていません。");
 		}
 	}
 
