@@ -13,23 +13,21 @@ import training2.studentmodel.subject.SubjectId;
 import training2.studentmodel.subject.SubjectName;
 
 public class RegisteStudentsRecode {
-	static final String INPUT_NUMBER = "成績を登録する生徒の生徒番号を入力してください。";
-	static final String CONFIRM_INFORMATION = "登録する情報に間違いはありませんか？";
-	static final String COMPLETE_REGISTER = "登録が完了しました。";
-	static final String SELECT_SAY = "yes/no?";
+	static final String INPUT_NUMBER_MESSAGE = "成績を登録する生徒の生徒番号を入力してください。";
+	static final String CONFIRM_MESSAGE = "登録内容に間違いはありませんか？\n%s\n(yes/no)";
+	static final String COMPLETE_REGISTER_MESSAGE = "登録が完了しました。";
 
 	public static void main(String[] args) throws IOException {
-		outMessage(INPUT_NUMBER);
+		outMessage(INPUT_NUMBER_MESSAGE);
 		int number = inputNumber();
 		StudentNumber studentNumber = new StudentNumber(number);
 		StudentDataAccess studentDataAccess = new StudentDataAccess();
 		boolean exist = studentDataAccess.existStudent(studentNumber);
 		checkExistStudent(exist);
 		ArrayList<PersonalRecord> personalRecords = inputRecords();
-		outMessage(CONFIRM_INFORMATION);
 		confirmRegisterInformation(studentNumber, personalRecords);
 		studentDataAccess.insertRecords(studentNumber, personalRecords);
-		outMessage(COMPLETE_REGISTER);
+		outMessage(COMPLETE_REGISTER_MESSAGE);
 	}
 
 	static void outMessage(String message) {
@@ -84,7 +82,7 @@ public class RegisteStudentsRecode {
 		return judge;
 	}
 
-	static StringBuilder createConfirmRecordsMessage(ArrayList<PersonalRecord> personalRecords) {
+	static String createConfirmRecordsMessage(ArrayList<PersonalRecord> personalRecords) {
 		StringBuilder message = new StringBuilder("");
 		for(int i = 0; i < 5; ++i) {
 			PersonalRecord personalRecord = personalRecords.get(i);
@@ -93,13 +91,13 @@ public class RegisteStudentsRecode {
 			String appendMessage = String.format("%s:%d点\t", subjectName, record);
 			message.append(appendMessage);
 		}
-		return message;
+		String createMessage = String.format(CONFIRM_MESSAGE, message);
+		return createMessage;
 	}
 
 	static void confirmRegisterInformation(StudentNumber studentNumber, ArrayList<PersonalRecord> personalRecords) {
-		StringBuilder message = createConfirmRecordsMessage(personalRecords);
+		String message = createConfirmRecordsMessage(personalRecords);
 		System.out.println(message);
-		outMessage(SELECT_SAY);
 		if(!judge()) {
 			System.out.println("最初からやり直してください。");
 			System.exit(-1);

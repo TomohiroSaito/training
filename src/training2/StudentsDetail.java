@@ -3,48 +3,30 @@ package training2;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.ArrayList;
 
-import training2.studentmodel.student.PersonalRecord;
-import training2.studentmodel.student.Record;
-import training2.studentmodel.student.Student;
-import training2.studentmodel.subject.Subject;
-import training2.studentmodel.subject.SubjectId;
-import training2.studentmodel.subject.SubjectName;
+import training2.studentmodel.student.StudentNumber;
 
 public class StudentsDetail {
+	static final String INPUT_NUMBER = "情報を確認する生徒の生徒番号を入力してください。";
 
 	public static void main(String[] args) throws IOException {
-		outMessage(1);
-		int number = inputNumber();
-		StudentDataAccess studentDataAccess = new StudentDataAccess();
-		boolean exist = studentDataAccess.existStudent(number);
-		checkExistStudent(exist);
-		Student student = studentDataAccess.selectStudent(number);
-		outMessage(2);
-		confirmRegisterInformation(number, personalRecords);
-		studentDataAccess.insertRecords(number, personalRecords);
-		outMessage(3);
+		boolean exist = false;
+		do {
+			outMessage(INPUT_NUMBER);
+			int number = inputNumber();
+			StudentDataAccess studentDataAccess = new StudentDataAccess();
+			StudentNumber studentNumber = new StudentNumber(number);
+			exist = studentDataAccess.existStudent(studentNumber);
+			checkExistStudent(exist);
+		} while(!exist);
 	}
 
-	static void outMessage(int number) {
-		switch(number) {
-			case 1:
-				System.out.println("情報を確認する生徒の生徒番号を入力してください。");
-				break;
-			case 2:
-				System.out.println("登録する情報に間違いはありませんか？");
-				break;
-			case 3:
-				System.out.println("登録が完了しました。");
-				break;
-			case 4:
-				System.out.println("yes/no?");
-				break;
-		}
+	static void outMessage(String message) {
+		System.out.println(message);
 	}
 
-	static String outRecordsMessage(int number) {
+
+/*	static String outRecordsMessage(int number) {
 		String subjectName = null;
 		switch(number) {
 			case 0:
@@ -124,9 +106,8 @@ public class StudentsDetail {
 		outMessage(4);
 		if(!judge()) {
 			System.out.println("最初からやり直してください。");
-			System.exit(-1);
 		}
-	}
+	}*/
 
 	static int inputNumber() {
 		String stringNumber = input();
@@ -163,7 +144,7 @@ public class StudentsDetail {
 		return inputString;
 	}
 
-	static ArrayList<PersonalRecord> inputRecords() {
+/*	static ArrayList<PersonalRecord> inputRecords() {
 		ArrayList<PersonalRecord> personalRecords = new ArrayList<PersonalRecord>();
 		for(int i = 0; i < 5; ++i) {
 			String tempSubjectName = outRecordsMessage(i);
@@ -190,12 +171,11 @@ public class StudentsDetail {
 			System.out.println("成績は1~100の値です。");
 			System.exit(-1);
 		}
-	}
+	}*/
 
 	static void checkExistStudent(boolean exist) {
 		if(!exist) {
 			System.out.println("存在しない生徒番号です。");
-			System.exit(-1);
 		}
 	}
 
