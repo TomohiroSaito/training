@@ -259,6 +259,7 @@ public class StudentDataAccess {
 	private void checkSelectError(boolean hasError) {
 		if(!hasError) {
 			System.out.println("SELECT文は実行されませんでした。");
+			System.exit(-1);
 		}
 	}
 
@@ -346,6 +347,159 @@ public class StudentDataAccess {
 			}
 		}
 		return student;
+	}
+
+	public void updateStudent(Student student) {
+		boolean resultError = false;
+		Connection connection = null;
+		PreparedStatement preparedStatement = null;
+
+		DBManager dbManager = new DBManager();
+
+		PartyId partyId = selectClassId(student.getParty().getPartyName());
+
+		try {
+			connection = dbManager.getConnection();
+
+			Date date = new Date(Calendar.getInstance().getTimeInMillis());
+
+			//UPDATE文の実行
+			String sql = "UPDATE Student SET name=?, class=?, updated_at=? WHERE number=?";
+			preparedStatement = connection.prepareStatement(sql);
+			preparedStatement.setString(1, student.getStudentName().getName());
+			preparedStatement.setInt(2, partyId.getId());
+			preparedStatement.setDate(3, date);
+			preparedStatement.setInt(4, student.getStudentNumber().getNumber());
+			int update = preparedStatement.executeUpdate();
+			if(update == 0 && !resultError) {
+				resultError = true;
+			}
+			checkInsertError(resultError);
+			connection.commit();
+		} catch(SQLException e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				if(preparedStatement != null) preparedStatement.close();
+				if(connection != null) connection.close();
+			} catch(SQLException e) {
+				e.printStackTrace();
+			}
+		}
+	}
+
+	public void updateRecord(Student student) {
+		boolean resultError = false;
+		Connection connection = null;
+		PreparedStatement preparedStatement = null;
+
+		DBManager dbManager = new DBManager();
+
+		try {
+			connection = dbManager.getConnection();
+
+			Date date = new Date(Calendar.getInstance().getTimeInMillis());
+
+			for(PersonalRecord personalRecord : student.getPersonalRecordList()) {
+				String sql = "UPDATE Record SET record=?, updated_at=? WHERE number=? and subject_id=?";
+				preparedStatement = connection.prepareStatement(sql);
+				preparedStatement.setInt(1, personalRecord.getRecord().getRecord());
+				preparedStatement.setDate(2, date);
+				preparedStatement.setInt(3, student.getStudentNumber().getNumber());
+				preparedStatement.setInt(4, personalRecord.getSubject().getSubjectId().getId());
+				int update = preparedStatement.executeUpdate();
+				if(update == 0 && !resultError) {
+					resultError = true;
+				}
+			}
+			checkInsertError(resultError);
+			connection.commit();
+		} catch(SQLException e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				if(preparedStatement != null) preparedStatement.close();
+				if(connection != null) connection.close();
+			} catch(SQLException e) {
+				e.printStackTrace();
+			}
+		}
+	}
+
+	public int selectRecordId(StudentNumber studentNumber, SubjectId subjectId) {
+		int record_id = 0;
+		boolean hasError = false;
+		Connection connection = null;
+		PreparedStatement preparedStatement = null;
+		ResultSet resultSet = null;
+
+		DBManager dbManager = new DBManager();
+
+		try {
+			connection = dbManager.getConnection();
+
+			//SELECT文の実行
+			String sql = "SELECT record_id FROM Record WHERE number=? AND subject_id=?";
+			preparedStatement = connection.prepareStatement(sql);
+			preparedStatement.setInt(1, studentNumber.getNumber());
+			preparedStatement.setInt(2, subjectId.getId());
+			resultSet = preparedStatement.executeQuery();
+			while(resultSet.next()) {
+				record_id = resultSet.getInt("record_id");
+				hasError = true;
+			}
+			checkSelectError(hasError);
+		} catch(SQLException e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				if(preparedStatement != null) preparedStatement.close();
+				if(resultSet != null) resultSet.close();
+				if(connection != null) connection.close();
+			} catch(SQLException e) {
+				e.printStackTrace();
+			}
+		}
+		return record_id;
+	}
+
+	public boolean existRecord(StudentNumber studentNumber) {
+		boolean exist = false;
+		int numberCount = 0;
+		//SELECT文が実行されたことの確認
+		boolean hasError = false;
+		Connection connection = null;
+		PreparedStatement preparedStatement = null;
+		ResultSet resultSet = null;
+
+		DBManager dbManager = new DBManager();
+
+		try {
+			connection = dbManager.getConnection();
+
+			//SELECT文の実行
+			String sql = "SELECT count(*) FROM Record WHERE number=?";
+			preparedStatement = connection.prepareStatement(sql);
+			preparedStatement.setInt(1, studentNumber.getNumber());
+			resultSet = preparedStatement.executeQuery();
+			while(resultSet.next()) {
+				numberCount = resultSet.getInt("count");
+				hasError = true;
+			}
+			checkSelectError(hasError);
+			exist = checkExist(numberCount);
+		} catch(SQLException e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				if(preparedStatement != null) preparedStatement.close();
+				if(resultSet != null) resultSet.close();
+				if(connection != null) connection.close();
+			} catch(SQLException e) {
+				e.printStackTrace();
+			}
+		}
+		return exist;
 	}
 
 /*	public ArrayList<PersonalRecord> selectPersonalRecords(int number) {
