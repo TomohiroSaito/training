@@ -26,44 +26,69 @@ public class UpdateStudents {
 	public static void main(String[] args) throws IOException {
 		boolean existStudent = false;
 		boolean existRecord = false;
-		boolean hasError = false;
+
+		//数字を入力するまで生徒番号の入力を促す
 		do {
 			outMessage(INPUT_NUMBER_MESSAGE);
 			int number = inputNumber();
 			if(number == -1) {
 				continue;
 			}
+
 			StudentNumber studentNumber = new StudentNumber(number);
 
 			StudentDataAccess studentDataAccess = new StudentDataAccess();
 
+			//入力した生徒番号の生徒・成績がDBに存在していることを確認
 			existStudent = studentDataAccess.existStudent(studentNumber);
+			existRecord = studentDataAccess.existRecord(studentNumber);
 
-			if(existStudent) {
-				Student student = inputUpdateStudent(studentNumber);
-				String message = createUpdateStudentMessage(student);
-				int intJudge = 0;
+			//生徒・成績が存在していれば、生徒・成績を入力してもらい、確認後DBに登録
+			if(existStudent && existRecord) {
+				Student student = inputUpdateStudentAndRecord(studentNumber);
+				String message = createUpdateStudentAndRecordMessage(student);
+				int resultJudge = 0;
 				do {
 					outMessage(message);
-					intJudge = judge();
-				} while(intJudge == -1);
-				if(intJudge == 0) {
-					hasError = false;
+					resultJudge = judge();
+				} while(resultJudge == -1);
+				if(resultJudge == 0) {
+					continue;
+				}
+
+				studentDataAccess.updateStudent(student);
+				studentDataAccess.updateRecord(student);
+				outMessage(COMMIT_MESSAGE);
+				break;
+
+			//生徒のみ存在していれば、生徒を入力してもらい、確認後DBに登録
+			} else if(existStudent){
+				Student student = inputUpdateStudentOnly(studentNumber);
+				String message = createUpdateStudentOnlyMessage(student);
+				int resultJudge = 0;
+				do {
+					outMessage(message);
+					resultJudge = judge();
+				} while(resultJudge == -1);
+				if(resultJudge == 0) {
 					continue;
 				}
 
 				studentDataAccess.updateStudent(student);
 				outMessage(COMMIT_MESSAGE);
+				break;
 
+
+			//生徒が存在していなければ、エラーメッセージを出力して再度入力を促す
 			} else {
 				outMessage(NOT_RESULT_MESSAGE);
 				outMessage(RETRY_MESSAGE);
 				continue;
 			}
-		} while(!hasError);
+		} while(true);
 	}
 
-	static String createUpdateStudentMessage(Student student) {
+	static String createUpdateStudentAndRecordMessage(Student student) {
 		String firstMessage = String.format("生徒番号:\t%d\nクラス:\t%s\n", student.getStudentNumber().getNumber(), student.getParty().getPartyName().getName());
 		String message = createConfirmRecordsMessage(student.getPersonalRecordList());
 		StringBuilder buildMessage = new StringBuilder(firstMessage);
@@ -72,17 +97,17 @@ public class UpdateStudents {
 		return message;
 	}
 
-	static Student inputUpdateStudent(StudentNumber studentNumber) {
+	static String createUpdateStudentOnlyMessage(Student student) {
+		String message = String.format("生徒番号:\t%d\nクラス:\t%s\n成績は未設定です\n", student.getStudentNumber().getNumber(), student.getParty().getPartyName().getName());
+		message = String.format(CONFIRM_MESSAGE, message);
+		return message;
+	}
+
+	static Student inputUpdateStudentAndRecord(StudentNumber studentNumber) {
 		outMessage(INPUT_CLASS_MESSAGE);
 		PartyName partyName = new PartyName(inputClass());
-		StudentDataAccess studentDataAccess = new StudentDataAccess();
-		boolean existRecord = studentDataAccess.existRecord(studentNumber);
 		ArrayList<PersonalRecord> personalRecords = new ArrayList<PersonalRecord>();
-		if(existRecord) {
-
-		} else {
-			personalRecords = inputRecords();
-		}
+		personalRecords = inputRecords();
 		Student student = new Student(studentNumber, new Party(partyName), personalRecords);
 		return student;
 	}
@@ -98,6 +123,13 @@ public class UpdateStudents {
 			}
 		} while(hasError);
 		return studentClass;
+	}
+
+	static Student inputUpdateStudentOnly(StudentNumber studentNumber) {
+		outMessage(INPUT_CLASS_MESSAGE);
+		PartyName partyName = new PartyName(inputClass());
+		Student student = new Student(studentNumber, new Party(partyName));
+		return student;
 	}
 
 	static boolean classError(String target) {

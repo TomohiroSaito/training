@@ -46,6 +46,13 @@ public class Student {
 		this.personalRecordList = personalRecords;
 	}
 
+	public Student(StudentNumber studentNumber, Party party) {
+		this.studentNumber = studentNumber;
+		this.studentName = new StudentName();
+		this.party = party;
+		this.personalRecordList = new ArrayList<PersonalRecord>();
+	}
+
 	public StudentNumber getStudentNumber() {
 		return studentNumber;
 	}

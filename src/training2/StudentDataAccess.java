@@ -111,7 +111,7 @@ public class StudentDataAccess {
 
 
 			//SELECT文の実行
-			String sql = "SELECT Student.number,Class.class_name,Student.name FROM Student INNER JOIN Class ON Student.class = Class.class_id WHERE Student.class=?";
+			String sql = "SELECT Student.number,Class.class_name,Student.name FROM Student INNER JOIN Class ON Student.class = Class.class_id WHERE Student.class=? ORDER BY Student.number ASC";
 			preparedStatement = connection.prepareStatement(sql);
 			preparedStatement.setInt(1, partyId.getId());
 			rs = preparedStatement.executeQuery();
@@ -232,14 +232,15 @@ public class StudentDataAccess {
 			connection = dbManager.getConnection();
 
 			//SELECT文の実行
-			String sql = "SELECT count(*) FROM Student WHERE number=?";
+			String sql = "SELECT count(*) as student FROM Student WHERE number=?";
 			preparedStatement = connection.prepareStatement(sql);
 			preparedStatement.setInt(1, studentNumber.getNumber());
 			resultSet = preparedStatement.executeQuery();
 			while(resultSet.next()) {
-				numberCount = resultSet.getInt("count");
+				numberCount = resultSet.getInt(1);
 				hasError = true;
 			}
+
 			checkSelectError(hasError);
 			exist = checkExist(numberCount);
 		} catch(SQLException e) {
@@ -364,12 +365,11 @@ public class StudentDataAccess {
 			Date date = new Date(Calendar.getInstance().getTimeInMillis());
 
 			//UPDATE文の実行
-			String sql = "UPDATE Student SET name=?, class=?, updated_at=? WHERE number=?";
+			String sql = "UPDATE Student SET class=?, updated_at=? WHERE number=?";
 			preparedStatement = connection.prepareStatement(sql);
-			preparedStatement.setString(1, student.getStudentName().getName());
-			preparedStatement.setInt(2, partyId.getId());
-			preparedStatement.setDate(3, date);
-			preparedStatement.setInt(4, student.getStudentNumber().getNumber());
+			preparedStatement.setInt(1, partyId.getId());
+			preparedStatement.setDate(2, date);
+			preparedStatement.setInt(3, student.getStudentNumber().getNumber());
 			int update = preparedStatement.executeUpdate();
 			if(update == 0 && !resultError) {
 				resultError = true;
@@ -401,7 +401,7 @@ public class StudentDataAccess {
 			Date date = new Date(Calendar.getInstance().getTimeInMillis());
 
 			for(PersonalRecord personalRecord : student.getPersonalRecordList()) {
-				String sql = "UPDATE Record SET record=?, updated_at=? WHERE number=? and subject_id=?";
+				String sql = "UPDATE Record SET record=?, updated_at=? WHERE number=? and subject_id=? ";
 				preparedStatement = connection.prepareStatement(sql);
 				preparedStatement.setInt(1, personalRecord.getRecord().getRecord());
 				preparedStatement.setDate(2, date);
