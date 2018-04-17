@@ -28,64 +28,62 @@ public class UpdateStudents {
 		boolean existRecord = false;
 
 		//数字を入力するまで生徒番号の入力を促す
+		int number = 0;
 		do {
 			outMessage(INPUT_NUMBER_MESSAGE);
-			int number = inputNumber();
-			if(number == -1) {
-				continue;
+			number = inputNaturalNumber();
+		} while(number == -1);
+
+		StudentNumber studentNumber = new StudentNumber(number);
+
+		StudentDataAccess studentDataAccess = new StudentDataAccess();
+
+		//入力した生徒番号の生徒・成績がDBに存在していることを確認
+		existStudent = studentDataAccess.existStudent(studentNumber);
+		existRecord = studentDataAccess.existRecord(studentNumber);
+
+		//生徒・成績が存在していれば、生徒・成績を入力してもらい、確認後DBに登録
+		if(existStudent && existRecord) {
+			Student student = inputUpdateStudentAndRecord(studentNumber);
+			String message = createUpdateStudentAndRecordMessage(student);
+			int resultJudge = 0;
+			do {
+				outMessage(message);
+				resultJudge = judge();
+			} while(resultJudge == -1);
+			if(resultJudge == 0) {
+				System.out.println(RETRY_MESSAGE);
+				return;
 			}
 
-			StudentNumber studentNumber = new StudentNumber(number);
+			studentDataAccess.updateStudent(student);
+			studentDataAccess.updateRecord(student);
+			outMessage(COMMIT_MESSAGE);
+		}
 
-			StudentDataAccess studentDataAccess = new StudentDataAccess();
-
-			//入力した生徒番号の生徒・成績がDBに存在していることを確認
-			existStudent = studentDataAccess.existStudent(studentNumber);
-			existRecord = studentDataAccess.existRecord(studentNumber);
-
-			//生徒・成績が存在していれば、生徒・成績を入力してもらい、確認後DBに登録
-			if(existStudent && existRecord) {
-				Student student = inputUpdateStudentAndRecord(studentNumber);
-				String message = createUpdateStudentAndRecordMessage(student);
-				int resultJudge = 0;
-				do {
-					outMessage(message);
-					resultJudge = judge();
-				} while(resultJudge == -1);
-				if(resultJudge == 0) {
-					continue;
-				}
-
-				studentDataAccess.updateStudent(student);
-				studentDataAccess.updateRecord(student);
-				outMessage(COMMIT_MESSAGE);
-				break;
-
-			//生徒のみ存在していれば、生徒を入力してもらい、確認後DBに登録
-			} else if(existStudent){
-				Student student = inputUpdateStudentOnly(studentNumber);
-				String message = createUpdateStudentOnlyMessage(student);
-				int resultJudge = 0;
-				do {
-					outMessage(message);
-					resultJudge = judge();
-				} while(resultJudge == -1);
-				if(resultJudge == 0) {
-					continue;
-				}
-
-				studentDataAccess.updateStudent(student);
-				outMessage(COMMIT_MESSAGE);
-				break;
-
-
-			//生徒が存在していなければ、エラーメッセージを出力して再度入力を促す
-			} else {
-				outMessage(NOT_RESULT_MESSAGE);
-				outMessage(RETRY_MESSAGE);
-				continue;
+		//生徒のみ存在していれば、生徒を入力してもらい、確認後DBに登録
+		if(existStudent && !existRecord){
+			Student student = inputUpdateStudentOnly(studentNumber);
+			String message = createUpdateStudentOnlyMessage(student);
+			int resultJudge = 0;
+			do {
+				outMessage(message);
+				resultJudge = judge();
+			} while(resultJudge == -1);
+			if(resultJudge == 0) {
+				System.out.println(RETRY_MESSAGE);
+				return;
 			}
-		} while(true);
+
+			studentDataAccess.updateStudent(student);
+			outMessage(COMMIT_MESSAGE);
+		}
+
+		//生徒が存在していなければ、エラーメッセージを出力して再度入力を促す
+		if(!existStudent) {
+			outMessage(NOT_RESULT_MESSAGE);
+			outMessage(RETRY_MESSAGE);
+		}
 	}
 
 	static String createUpdateStudentAndRecordMessage(Student student) {
@@ -212,10 +210,10 @@ public class UpdateStudents {
 		return new String(message);
 	}
 
-	static int inputNumber() {
+	static int inputNaturalNumber() {
 		int number = 0;
 		String stringNumber = input();
-		if(!numberError(stringNumber)) {
+		if(!naturalNumberError(stringNumber)) {
 			number = -1;
 		} else {
 			number = numberFormat(stringNumber);
@@ -223,7 +221,7 @@ public class UpdateStudents {
 		return number;
 	}
 
-	static boolean numberError(String target) {
+	static boolean naturalNumberError(String target) {
 		boolean hasNumber = true;
 		if(!target.matches("[0-9]*")) {
 			System.out.println("数字を入力してください。");
@@ -275,7 +273,7 @@ public class UpdateStudents {
 	}
 
 	static int inputRecord() {
-		int record = inputNumber();
+		int record = inputNaturalNumber();
 		if(recordRangeCheck(record)) {
 			record = -1;
 		}
