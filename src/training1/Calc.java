@@ -1,3 +1,5 @@
+package training1;
+
 class Calc {
 	public static void main(String args[]) {
 		if(args.length < 3) {
