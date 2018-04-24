@@ -1,0 +1,201 @@
+@CHARSET "UTF-8";
+
+html * {
+	padding: 0;
+	margin: 0;
+}
+
+header {
+	padding: 8px 0 8px 8px;
+	color: #ffffff;
+	background-color: #a9c4eb;
+	display: flex;
+	width: 100%;
+	height: 36px;
+}
+
+header h1 {
+	font-size: 24px;
+}
+
+a {
+	display: block;
+	text-decoration: none;
+	color: inherit;
+}
+
+.nav-link {
+	padding: 4px 0 4px 35px;
+	font-weight: bold;
+	font-size: 17px;
+}
+
+.nav-link-text {
+}
+
+.page-title {
+	margin: 0 auto 100px auto;
+	color: #a9c4eb;
+	font-size: 48px;
+	width: 700px;
+	text-align: center;
+}
+
+.student-square-text {
+	background-color: #a9c4eb;
+	width: 700px;
+	height: 72px;
+	margin: 0 auto 70px;
+	font-size: 48px;
+	text-align: center;
+	color: #ffffff;
+	padding: 9px 0;
+	font-weight: bold;
+	letter-spacing: 3px;
+}
+
+.student-libraly {
+}
+
+.student-register {
+}
+
+.main-content {
+	margin: 150px;
+}
+
+/*student_libraly*/
+
+.student-list-table th {
+	background-color: #a9c4eb;
+	width: 120px;
+	height: 30px;
+	color: #ffffff;
+	border: 1px #ffffff solid;
+}
+
+.student-list-table {
+	margin: 0 auto;
+	border-left: 1px #a9c4eb solid;
+	border-bottom: 1px #a9c4eb solid;
+	border-right: 1px #a9c4eb solid;
+	border-collapse: collapse;
+}
+
+.table-col-name {
+}
+
+/* .table-border-setting {
+	border-left: 1px #a9c4eb solid;
+	border-bottom: 1px #a9c4eb solid;
+	border-right: 1px #a9c4eb solid;
+} */
+
+/*student_register*/
+
+.student-input-title {
+	display: inline-block;
+	background-color: #a9c4eb;
+	width: 250px;
+	height: 30px;
+	font-size: 19px;
+	text-align: center;
+	color: #ffffff;
+	padding: 9px 0;
+	font-weight: bold;
+}
+
+.input-name {
+	margin: 0 0 20px 0;
+}
+
+.input-class {
+	margin: 0 0 20px 0;
+}
+
+.input-record {
+	margin: 0 0 5px 0;
+}
+
+.asterisk {
+	color: #ff0000;
+	display: inline-block;
+}
+
+.note {
+	color: #ff0000;
+	margin: 10px 5px;
+}
+
+.student-register-form {
+	padding: 0 240px 0 100px;
+}
+
+.student-input-name {
+	margin: 0 0 0 30px;
+	width: 670px;
+	height: 35px;
+}
+
+.student-input-class {
+	margin: 0 0 0 30px;
+	width: 100px;
+	height: 35px;
+}
+
+.student-input-record {
+	margin: 0 0 0 30px;
+	width: 173px;
+	height: 35px;
+}
+
+.quantifier {
+	padding: 4px;
+	display: inline-block;
+	font-size: 19px;
+	color: #a9c4eb;
+	vertical-align: bottom;
+	font-weight: bold;
+}
+
+.student-register-button {
+	font-size: 14px;
+	width: 100px;
+	height: 30px;
+	float: right;
+	margin: 0 40px 0 0;
+}
+
+/*result*/
+
+.toppage-return {
+	font-size: 14px;
+	width: 100px;
+	height: 30px;
+	margin: 0 auto;
+	display: block;
+}
+
+.message {
+	color: #ff0000;
+	margin: 0 0 30px 0;
+	padding: 0 0 0 100px;
+	height: 24px;
+	width: 1224px;
+}
+
+.top-page-link {
+	margin: 150px auto;
+	font-size: 18px;
+	width: 200px;
+	padding-top: 10px;
+	padding-bottom: 10px;
+	text-align: center;
+	border: 2px solid;
+	border-color: #aaaaaa #444444 #444444 #aaaaaa;
+	background:#cccccc;
+}
+
+.top-page-link:hover {
+	background:#777777;
+}
