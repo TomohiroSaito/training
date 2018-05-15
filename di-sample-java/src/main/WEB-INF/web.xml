@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<context-param>
+	<param-name>contextConfigLocation</param-name>
+	<param-value>/WEB-INF/Bean定義ファイル.xml</param-value>
+</context-param>
+
+<listener>
+	<listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
+</listener>
+<!-- Listenerが使用できない場合は以下のServletを定義する
+<servlet>
+	<servlet-name>context</servlet-name>
+	<servlet-class>org.springframework.web.context.ContextLoaderServlet</servlet-class>
+	<load-on-startup>1</load-on-startup>
+</servlet>
+ -->
+
+ <context-param>
+ 	<param-name>contextConfigLocation</param-name>
+ 	<param-value>/WEB-INF/applicationContext.xml
+ 	/WEB-INF/applicationContext-petsite.xml</param-value>
+ </context-param>
