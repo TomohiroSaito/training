@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="
+	http://www.springframework.org/schema/beans
+	http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
+
+	 <bean id="productService" class="sample.di.business.service.ProductServiceImpl" autowire="byType" />
+	 <bean id="productDao" class="sample.di.dataaccess.ProductDaoImpl" />
+
+	<bean id="friendlyService" class="sample.di.petsite.business.FriendlyServiceImpl">
+		<property name="friendlyDao" ref="friendlyDao" />
+	</bean>
+	<bean id="friendlyDao" class="sample.di.petsite.dao.spring.JdbcFriendlyDao">
+		<property name="dataSource" ref="dataSource" />
+	</bean>
+
+
+</beans>

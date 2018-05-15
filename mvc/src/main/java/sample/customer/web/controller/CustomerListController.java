@@ -7,6 +7,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 
@@ -37,5 +38,11 @@ public class CustomerListController {
 		Customer customer = customerService.findById(customerId);
 		model.addAttribute("customer", customer);
 		return "customer/detail";
+	}
+
+	@ExceptionHandler
+	public String handleException(DataNotFoundException e) {
+		LOG.warn("Customer is not found", e);
+		return "customer/notfound";
 	}
 }
