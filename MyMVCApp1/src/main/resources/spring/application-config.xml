@@ -1,12 +1,68 @@
 <?xml version="1.0" encoding="UTF-8"?>
-
-<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xmlns:context="http://www.springframework.org/schema/context"
-	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
-		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
-    
-    <!-- Uncomment and add your base-package here:
+<beans
+ xmlns="http://www.springframework.org/schema/beans"
+ xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+ xmlns:context="http://www.springframework.org/schema/context"
+ xmlns:jpa="http://www.springframework.org/schema/data/jpa"
+ xmlns:jdbc="http://www.springframework.org/schema/jdbc"
+ xsi:schemaLocation="http://www.springframework.org/schema/beans
+  http://www.springframework.org/schema/beans/spring-beans.xsd
+  http://www.springframework.org/schema/context
+  http://www.springframework.org/schema/context/spring-context.xsd
+  http://www.springframework.org/schema/data/jpa
+  http://www.springframework.org/schema/data/jpa/spring-jpa.xsd
+  http://www.springframework.org/schema/jdbc
+  http://www.springframework.org/schema/jdbc/spring-jdbc.xsd">
+  
+    <!-- Uncomment and add your base-package here: -->
          <context:component-scan
-            base-package="org.springframework.samples.service"/>  -->
+            base-package="jp.tuyano.spring.mvc1.*"/>
+            
+	<context:property-placeholder location="classpath:application.properties" />
+	
+	<jpa:repositories base-package="jp.tuyano.spring.mvc1" />
+        
+    <bean class="org.springframework.orm.jpa.support.PersistenceAnnotationBeanPostProcessor" />
+    
+    <bean id="transactionManager"
+     class="org.springframework.orm.jpa.JpaTransactionManager">
+    	<property name="entityManagerFactory" ref="entityManagerFactory" />
+    	<property name="dataSource" ref="dataSource" /> 
+    </bean>
+    
+    <bean id="entityManagerFactory"
+    	class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
+    	<property name="dataSource" ref="dataSource" />
+    	<property name="jpaVendorAdapter">
+    		<bean class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter">
+    			<property name="generateDdl" value="true" />
+    			<property name="database" value="${jdbc.type}" />
+    		</bean>
+    	</property>
+    </bean>
+    
+    <!-- jdbc -->
+ <jdbc:embedded-database id="dataSource" type="H2">
+    	<jdbc:script location="${jdbc.scriptLocation}" />
+    </jdbc:embedded-database>
+    
+    <!-- DB用の設定ファイル -->
+<!--	<bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+	  <property name="location" value="database.properties" />
+	</bean> -->
+	
+	<!-- DB接続用の設定 -->
+<!--  <bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+	  <property name="driverClassName" value="org.postgresql.Driver" />
+	  <property name="url" value="jdbc:postgresql://localhost:5433/spring" />
+	  <property name="username" value="postgres" />
+	  <property name="password" value="postgres" />
+	</bean> -->
+	
+	<!-- JDBC Template Bean -->
+<!--	<bean id="jdbcTemplate" class="org.springframework.jdbc.core.JdbcTemplate">
+	  <property name="dataSource" ref="dataSource" />
+	</bean> -->
+    
 
 </beans>

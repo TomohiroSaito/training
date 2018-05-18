@@ -1,0 +1,160 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.domain.mapper.MeetingRoomMapper">
+	<select id="findOne" parameterType="string" resultType="MeetingRoom">
+		SELECT
+			room_id AS roomId,
+			room_name AS roomName,
+			capacity
+		FROM
+			meeting_room
+		WHERE
+			room_id = #{roomId}
+	</select>
+	
+	<select id="findAll" resultType="MeetingRoom">
+		SELECT
+			room_id AS roomId,
+			room_name AS roomName,
+			capacity
+		FROM
+			meeting_room
+		ORDER BY
+			room_id
+	</select>
+	
+	<settings>
+		<setting name="mapUnderscoreToCamelCase" value="true"/>
+	</settings>
+	
+	<resultMap id="roomResultMap" type="MeetingRoom">
+		<id column="room_id" property="roomId" />
+		<result column="room_name" property="roomName" />
+	</resultMap>
+	
+	<select id="findByRoomIds" parameterType="list" resultType="MeetingRoom">
+		SELECT
+			room_id, room_name, capacity
+		FROM
+			meeting_room
+		<where>
+			<if test="list != null">
+				<foreach item="id" index="index" collection="list"
+					open="room_id IN (" separator="," close=")">)
+					#{id}
+				</foreach>
+			</if>
+		</where>
+		ORDER BY
+			room_id
+	</select>
+	
+	<update id="update" parameterType="MeetingRoom">
+		UPDATE
+			meeting_room
+		<set>
+			room_name = #{roomName},
+			<if test="capacity > 0">
+				capacity = #{capacity}
+			</if>
+		</set>
+		WHERE
+			room_id = #{roomId}
+	</update>
+	
+	<select id="findOne"
+		parameterType="string" resultMap="meetingRoomResultMap">
+		SELECT
+			room_id, room_name, capacity
+		FROM
+			meeting_room
+		WHERE
+			room_id = #{roomId}
+	</select>
+	
+	<resultMap id="meetingRoomResultMap" type="MeetingRoom">
+		<id property="roomId" column="room_id"/>
+		<result property="roomName" column="room_name"/>
+		<collection property="reservableRooms" column="room_id"
+			javaType="ArrayList" select="findReservableRooms"/>
+	</resultMap>
+	
+	<select id="findReservableRooms"
+		parameterType="string" resultMap="reservableRoomResultMap">
+		SELECT
+			room_id, reserved_date
+		FROM
+			reservable_room
+		WHERE
+			room_id = #{roomId}
+		ORDER BY
+			reserved_date	
+	</select>
+	
+	<resultMap id="reservableRoomResultMap" type="ReservableRoom">
+		<result property="roomId" column="room_id"/>
+		<result property="reservedDate" column="reserved_date"/>
+	</resultMap>
+	
+	<resultMap id="reservableRoomResultMap" type="ReservableRoom">
+		<result property="roomId" column="room_id"/>
+		<result property="reservedDate" column="reserved_date"/>
+		<collection property="reservations"
+			column="{roomId=room_id, reservedDate=reserved_date}"
+			javaType="ArrayList" select="findReservations"/>
+	</resultMap>
+	
+	<select id="findReservations" resultType="Reservation">
+		SELECT
+			reservation_id, room_id, reserved_date, start_time, end_time
+		FROM
+			reservation
+		WHERE
+			room_id = #{roomId}
+		AND
+			reserved_date = #{reservedDate}
+		ORDER BY
+			start_time
+	</select>
+	
+	<select id="selectJoinMeetingRoom"
+		parameterType="string" resultMap="meetingRoomResultMap">
+		SELECT
+			mr.room_id, mr.room_name,
+			rr.room_id AS rsv_room_id, rr.reserved_date
+		FROM
+			meeting_room mr
+			LEFT OUTER JOIN reservable_room rr
+				ON mr.room_id = rr.room_id
+		WHERE
+			mr.room_id = #{id}
+	</select>
+	
+	<resultMap id="meetingRoomResultMap" type="MeetingRoom">
+		<id property="roomId" column="room_id"/>
+		<result property="roomName" column="room_name"/>
+		<collection property="reservableRooms" javaType="ArrayList" ofType="ReservableRoom">
+			<result property="roomId" column="rsv_room_id"/>
+			<result property="reservedDate" column="reserved_date"/>
+		</collection>
+	</resultMap>
+	
+	<select id="findAll" resultType="MeetingRoom">
+		SELECT
+			room_id, room_name, capacity
+		FROM
+			meeting_room
+		ORDER BY
+			room_id
+	</select>
+	
+	<select id="collectAll" resultType="MeetingRoom">
+		SELECT
+			room_id, room_name, capacity
+		FROM
+			meeting_room
+		ORDER BY
+			room_id
+	</select>
+</mapper>

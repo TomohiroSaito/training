@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+　xmlns:jdbc="http://www.springframework.org/schema/jdbc"
+ xmlns:tx="http://www.springframework.org/schema/tx"
+ xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+　xmlns:context="http://www.springframework.org/schema/context"
+ xmlns:mybatis="http://mybatis.org/schema/mybatis-spring"
+　xsi:schemaLocation="http://www.springframework.org/schema/beans
+ http://www.springframework.org/schema/beans/spring-beans.xsd
+ http://www.springframework.org/schema/jdbc
+ http://www.springframework.org/schema/jdbc/spring-jdbc.xsd
+ http://www.springframework.org/schema/tx
+ http://www.springframework.org/schema/tx/spring-tx.xsd
+　http://www.springframework.org/schema/context
+　http://www.springframework.org/schema/context/spring-context.xsd
+ http://mybatis.org/schema/mybatis-spring
+ http://mybatis.org/schema/mybatis-spring.xsd">
+    
+    <!-- Uncomment and add your base-package here:
+         <context:component-scan
+            base-package="org.springframework.samples.service"/>  -->
+ 	
+ 	<context:component-scan base-package="sample.example.domain" />
+ 	
+ 	<tx:annotation-driven/>
+ 	
+ 	<mybatis:scan base-package="sample.example.domain.mapper"/>
+ 	
+ 	<jdbc:embedded-database type="H2" id="dataSource">
+ 		<jdbc:script location="classpath:/schema.sql" />
+ 		<jdbc:script location="classpath:/data.sql" />
+ 	</jdbc:embedded-database>
+ 	
+ 	<bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+ 		<property name="dataSource" ref="dataSource" />
+ 	</bean>
+ 	
+ 	<bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+ 		<property name="dataSource" ref="dataSource" />
+ 		<property name="configLocation" value="classpath:/mybatis-config.xml" />
+ 	</bean>
+	
+	
+
+</beans>

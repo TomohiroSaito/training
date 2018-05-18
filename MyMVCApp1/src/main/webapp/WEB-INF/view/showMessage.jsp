@@ -12,10 +12,11 @@
 		</style>
 	</head> 
 	<body>
-		<h1>Welcome</h1>
+		<h1>Index Page</h1>
 		<p>${msg}</p>
 		<form method="post" action="./post">
-			<input type="text" name="text1">
+			<input type="text" name="title"><br>
+			<textarea name="content"></textarea><br>
 			<input type="submit">
 		</form>
 	</body>
