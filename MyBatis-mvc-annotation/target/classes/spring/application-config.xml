@@ -12,28 +12,26 @@
   http://www.springframework.org/schema/context/spring-context.xsd">
     
     <!-- Uncomment and add your base-package here: -->
+    
+
 
     <bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
     	<property name="driverClassName"><value>org.postgresql.Driver</value></property>
-    	<property name="url"><value>jdbc:postgresql://localhost:5433/spring</value></property>
+    	<property name="url"><value>jdbc:postgresql://localhost:5432/spring</value></property>
     	<property name="username"><value>postgres</value></property>
     	<property name="password"><value>postgres</value></property>
     </bean>
     
     <bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
-    	<property name="dataSource"><ref local="dataSource"/></property>
+    	<property name="dataSource"><ref bean="dataSource"/></property>
     </bean>
     
     <bean id="sqlMapClient" class="org.springframework.orm.ibatis.SqlMapClientFactoryBean">
     	<property name="configLocation">
-    		<value>sample/sqlMapConfig.xml</value>
+    		<value>classpath:/sample/sqlMapConfig.xml</value>
     	</property>
     	<property name="dataSource" ref="dataSource"/>
-    	<property name="mappingLocations">
-    		<list>
-    			<value>sample/Friendry.xml</value>
-    		</list>
-    	</property>
+<!--    	<property name="mappingLocations" value="classpath:/sample/Friendry.xml" /> -->
 	</bean>
 	
 	<bean class="org.springframework.orm.ibatis.SqlMapClientTemplate">

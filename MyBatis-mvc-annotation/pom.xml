@@ -87,6 +87,14 @@
 			<scope>test</scope>
 		</dependency>
 		
+		<!-- jdbc -->
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-jdbc</artifactId>
+			<version>3.1.1.RELEASE</version>
+		</dependency>
+		
+		
 		<!-- PostgreSQL -->
 		<dependency>
 			<groupId>postgresql</groupId>
@@ -95,7 +103,7 @@
 		</dependency>
 		
 		<!-- MyBatis -->
-		<dependency>
+<!--		<dependency>
 			<groupId>org.apache.ibatis</groupId>
 			<artifactId>ibatis-core</artifactId>
 			<version>3.0</version>
@@ -109,6 +117,16 @@
 			<groupId>org.apache.ibatis</groupId>
 			<artifactId>ibatis-sqlmap</artifactId>
 			<version>2.3.0</version>
+		</dependency> -->
+		<dependency>
+			<groupId>org.mybatis</groupId>
+			<artifactId>mybatis2</artifactId>
+			<version>2.3.6</version>
+		</dependency>
+		<dependency>
+			<groupId>org.mybatis</groupId>
+			<artifactId>mybatis-2-spring</artifactId>
+			<version>1.0.2</version>
 		</dependency>
 		
 				<!-- Hibernate -->

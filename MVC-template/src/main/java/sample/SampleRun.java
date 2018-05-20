@@ -5,9 +5,10 @@ import org.springframework.web.bind.annotation.RestController;
 import java.io.Reader;
 
 import org.apache.taglibs.standard.resources.Resources;
+import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-@RestController
+@Controller
 public class SampleRun {
 	
 	@RequestMapping("/hello")
