@@ -16,9 +16,25 @@ public class SampleRun {
 	
 	@RequestMapping("/hello")
 	public String hello(Model model) {
-		Owner owner = friendlyDao.getOwner(2);
+		Owner owner = friendlyDao.getOwner("2");
 		model.addAttribute("owner", owner);
 		
 		return "showMessage";
+	}
+	
+	@RequestMapping("/insert")
+	public String insert(Model model) {
+		Owner owner = new Owner("3", "takako");
+		friendlyDao.insertOwner(owner);
+		
+		return "showResult";
+	}
+	
+	@RequestMapping("/update")
+	public String update() {
+		Owner owner = new Owner("3", "momotaro");
+		friendlyDao.updateOwner(owner);
+		
+		return "showUpdate";
 	}
 }

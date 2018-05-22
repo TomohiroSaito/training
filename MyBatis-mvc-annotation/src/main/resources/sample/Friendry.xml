@@ -2,7 +2,7 @@
 <!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN"
 	"http://www.ibatis.com/dtd/sql-map-2.dtd">
 	
-<sqlMap namespace="Friendly">
+<sqlMap namespace="Friendry">
 	<resultMap id="ownerResult" class="sample.biz.domain.Owner">
 		<result property="ownerId" column="OWNER_ID"/>
 		<result property="ownerName" column="OWNER_NAME"/>
@@ -11,9 +11,21 @@
 	<!-- <sqlMap resource="sample/Friendly.xml"/> -->
 	
 	<!-- Owner SQL -->
-	<select id="findOwner" parameterClass="java.lang.String" resultMap="ownerResult">
+	<select id="findOwner" parameterClass="sample.biz.domain.Owner" resultMap="ownerResult">
 		select OWNER_ID, OWNER_NAME from OWNER
-			where OWNER_ID = #value#
+		<dynamic prepend="where">
+			<isNotNull prepend="and" property="ownerId">
+				OWNER.OWNER_ID = #ownerId#
+			</isNotNull>
+		</dynamic>
 	</select>
+	
+	<insert id="insertOwner" parameterClass="sample.biz.domain.Owner">
+		insert into OWNER(OWNER_ID,OWNER_NAME) values(#ownerId#,#ownerName#)
+	</insert>
+	
+	<update id="updateOwner" parameterClass="sample.biz.domain.Owner">
+		update OWNER set OWNER_NAME=#ownerName# where OWNER_ID=#ownerId#
+	</update>
 
 </sqlMap>

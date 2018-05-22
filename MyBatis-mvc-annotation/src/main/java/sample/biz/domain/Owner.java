@@ -1,13 +1,18 @@
 package sample.biz.domain;
 
 public class Owner {
-	private int ownerId;
+	private String ownerId;
 	private String ownerName;
 	
-	public int getOwnerId() {
+	public Owner() {}
+	public Owner(String ownerId, String ownerName) {
+		this.ownerId = ownerId;
+		this.ownerName = ownerName;
+	}
+	public String getOwnerId() {
 		return ownerId;
 	}
-	public void setOwnerId(int ownerId) {
+	public void setOwnerId(String ownerId) {
 		this.ownerId = ownerId;
 	}
 	public String getOwnerName() {

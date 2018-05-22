@@ -3,7 +3,7 @@ package sample.dataaccess;
 import sample.biz.domain.Owner;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.orm.ibatis.SqlMapClientTemplate;
+import org.springframework.orm.ibatis.SqlMapClientOperations;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Repository;
 
@@ -13,11 +13,23 @@ import sample.domain.FriendlyDao;
 public class SqlMapFriendlyDao implements FriendlyDao {
 	
 	@Autowired
-	private SqlMapClientTemplate template;
+	@SuppressWarnings("deprecation")
+	private SqlMapClientOperations operation;
 	
-	public Owner getOwner(int id) {
+	@SuppressWarnings("deprecation")
+	public Owner getOwner(String id) {
 		Owner cond = new Owner();
 		cond.setOwnerId(id);
-		return (Owner) template.queryForObject("findOwner", cond);
+		return (Owner) operation.queryForObject("findOwner", cond);
+	}
+	
+	@SuppressWarnings("deprecation")
+	public void insertOwner(Owner owner) {
+		operation.update("insertOwner", owner);
+	}
+	
+	@SuppressWarnings("deprecation")
+	public void updateOwner(Owner owner) {
+		operation.update("updateOwner", owner);
 	}
 }
