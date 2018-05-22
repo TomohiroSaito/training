@@ -8,14 +8,23 @@ import sample.domain.PetDao;
 
 import java.io.InputStream;
 import java.io.Reader;
+import java.io.StringWriter;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Properties;
 
 import org.apache.ibatis.io.Resources;
 import org.apache.ibatis.session.SqlSession;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.apache.ibatis.session.SqlSessionFactoryBuilder;
+import org.apache.velocity.Template;
+import org.apache.velocity.VelocityContext;
+import org.apache.velocity.app.Velocity;
+import org.apache.velocity.exception.MethodInvocationException;
+import org.apache.velocity.exception.ParseErrorException;
+import org.apache.velocity.exception.ResourceNotFoundException;
+import org.apache.velocity.runtime.resource.loader.FileResourceLoader;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -144,4 +153,45 @@ public class SampleRun {
 		return "showSelectMap";
 	}
 	
+	@RequestMapping("/velocity")
+	public String velocity(Model model) {
+		 Properties p = new Properties();
+		    p.setProperty("input.encoding", "UTF-8");
+		    p.setProperty("output.encoding", "UTF-8");
+		    p.setProperty("resource.loader", "file");
+		    p.setProperty("file.resource.loader.path", "classpath:/template"); // ※このプロパティの値を空にしたいが、設定ファイルだと上手く空にならない。。。このためPropertiesで設定する
+		    p.setProperty("file.resource.loader.class", FileResourceLoader.class.getTypeName());
+		    p.setProperty("runtime.log.logsystem.class", "org.apache.velocity.runtime.log.SimpleLog4JLogSystem");
+		    p.setProperty("runtime.log.logsystem.log4j.category", "velocity");
+		    p.setProperty("runtime.log.logsystem.log4j.logger", "velocity");
+		    		    
+		Pet pet = petDao.findPetById("10");
+		try {
+			//Velocityの初期化
+			Velocity.init(p);
+			
+			//Velocityコンテキストに値を設定
+			VelocityContext context = new VelocityContext();
+			context.put("pet", pet);
+
+			StringWriter sw = new StringWriter();
+			//テンプレートの作成
+			Template template = Velocity.getTemplate("select.vm");
+			//テンプレートとマージ
+			template.merge(context, sw);
+			//マージしたデータはWriterオブジェクトであるswが持っているのでそれを文字列として出力
+			model.addAttribute("sw", sw);
+
+		} catch(ResourceNotFoundException e) {
+			System.out.println("テンプレートが見つかりません");
+		} catch(ParseErrorException e) {
+			System.out.println("構文にエラーがあります");
+		} catch(MethodInvocationException e) {
+			System.out.println("テンプレートのどこかにエラーがあります");
+		} catch(Exception e) {
+			System.out.println("その他のエラーです");
+		}
+		
+		return "showSelectVelocity";
+	}
 }

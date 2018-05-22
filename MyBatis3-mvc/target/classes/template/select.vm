@@ -1,0 +1,3 @@
+pet_id= $pet.petId
+owner_name= $pet.owner_name
+price= $pet.price

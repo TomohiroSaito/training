@@ -19,7 +19,7 @@
 			</dataSource>
 		</environment>
 	</environments>
-<!--	<mappers>
+	<mappers>
 		<mapper resource="sample/dao/PetMapper.xml" />
-	</mappers> -->
+	</mappers>
 </configuration>
