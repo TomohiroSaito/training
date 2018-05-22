@@ -1,0 +1,17 @@
+$visitor.name さま
+
+
+
+このたびはお買い上げいただき誠にありがとうございます。
+
+商品のほうは
+
+$visitor.address
+
+のほうにご配送させていただきます。
+
+【商品】
+
+商品名 : $goods.goodsName
+
+価格 : $goods.price 円
