@@ -26,7 +26,7 @@
 		
 
 		<!-- Spring -->
-		<spring-framework.version>5.0.0.RELEASE</spring-framework.version>
+		<spring-framework.version>3.2.18.RELEASE</spring-framework.version>
 
 		<!-- Hibernate / JPA -->
 		<hibernate.version>4.2.1.Final</hibernate.version>
@@ -53,6 +53,12 @@
 			<artifactId>spring-webmvc</artifactId>
 			<version>${spring-framework.version}</version>
 		</dependency>
+		<dependency>
+		    <groupId>org.springframework</groupId>
+		    <artifactId>spring-context-support</artifactId>
+		    <version>${spring-framework.version}</version>
+		</dependency>
+		
 		
 		<!-- Other Web dependencies -->
 		<dependency>
@@ -166,9 +172,24 @@
 		
 		<!-- Velocity -->
 		<dependency>
-		    <groupId>org.apache.velocity</groupId>
-		    <artifactId>velocity-engine-core</artifactId>
-		    <version>2.0</version>
+	        <groupId>org.apache.velocity</groupId>
+	        <artifactId>velocity</artifactId>
+	        <version>1.6.4</version>
+	    </dependency>
+	    <dependency>
+	      <groupId>org.springframework</groupId>
+	      <artifactId>spring-context-support</artifactId>
+	      <version>3.2.3.RELEASE</version>
+	     </dependency>
+		<dependency>
+	      <groupId>velocity</groupId>
+	      <artifactId>velocity-dep</artifactId>
+	      <version>1.4</version>
+	    </dependency>
+	    <dependency>  
+		    <groupId>velocity-tools</groupId>  
+		    <artifactId>velocity-tools-generic</artifactId>  
+		    <version>1.2</version>  
 		</dependency>
 		
 		

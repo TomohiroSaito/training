@@ -10,10 +10,17 @@ import sample.domain.PetDao;
 @Repository
 public class MybatisSpringPetDao implements PetDao {
 	
+//	@Autowired
+//	private SqlSession session;
+	
 	@Autowired
-	private SqlSession session;
+	private PetMapper petMapper;
 	
 	public Pet findPetById(String id) {
-		return session.selectOne("sample.dao.PetMapper.selectPet", id);
+//		return session.selectOne("sample.dao.PetMapper.selectPet", id);
+		
+		Pet pet = petMapper.selectPet(id);
+		
+		return pet;
 	}
 }

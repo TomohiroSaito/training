@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="sample.dao.OwnerMapper">
+	<resultMap type="sample.biz.domain.Owner" id="ownerResultMap">
+		<result property="ownerId" column="OWNER_ID" />
+		<result property="ownerName" column="OWNER_NAME" />
+	</resultMap>
+	<select id="selectOwner" parameterType="java.lang.String" resultMap="ownerResultMap">
+		SELECT OWNER_ID, OWNER_NAME FROM OWNER WHERE OWNER_ID=#{ownerId}
+	</select>
+	
+</mapper>
